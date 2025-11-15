@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>FinAI Platform</title>
+</head>
+
+<body>
+    <div style="width: 800px; margin: auto;">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul style="color:red;">
+                {% for msg in messages %}
+                    <li>{{ msg }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
