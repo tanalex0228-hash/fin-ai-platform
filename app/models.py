@@ -30,6 +30,12 @@ class StockPrice(db.Model):
     return_pct = db.Column(db.Float)
     log_return = db.Column(db.Float)
 
+    # ⭐⭐ 這三行是唯一新增的
+    __table_args__ = (
+        db.UniqueConstraint("symbol", "date", name="uix_symbol_date"),
+    )
+
+
 class StockFundFlow(db.Model):
     __tablename__ = "stock_funds"
 
@@ -86,15 +92,29 @@ class BacktestResult(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+
     symbol = db.Column(db.String(16), index=True)
     strategy_name = db.Column(db.String(64))
+
     start_date = db.Column(db.Date)
     end_date = db.Column(db.Date)
+
+    # 核心績效
     total_return = db.Column(db.Float)
+    buy_hold_return = db.Column(db.Float)
     max_drawdown = db.Column(db.Float)
     sharpe_ratio = db.Column(db.Float)
-    trades_json = db.Column(db.Text)  # 存每筆交易詳細資料（JSON 字串）
+    trade_count = db.Column(db.Integer)
+    win_rate = db.Column(db.Float)
+
+    # JSON 欄位
+    params_json = db.Column(db.Text)
+    trades_json = db.Column(db.Text)
+    equity_json = db.Column(db.Text)
+
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
 
 class AIPrediction(db.Model):
     __tablename__ = "ai_predictions"

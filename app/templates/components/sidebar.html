@@ -1,0 +1,212 @@
+<!-- 側邊欄 -->
+<div id="sidebar" class="sidebar">
+    <h3 class="title">技術圖表</h3>
+
+    <a href="/chart" class="item">K 線（MA）</a>
+    <a href="/chart/macd" class="item">MACD</a>
+    <a href="/chart/rsi" class="item">RSI</a>
+    <a href="/chart/kd" class="item">KD</a>
+    <a href="/chart/bbands" class="item">布林通道</a>
+    <a href="/chart/volume" class="item">成交量</a>
+
+    <hr>
+
+    <h3 class="title">選股分析</h3>
+    <a href="/screener" class="item">A2 選股器</a>
+
+    <hr>
+
+    <h3 class="title">資料庫</h3>
+    <a href="/stocks" class="item">股票列表</a>
+
+    <h3 class="title">自訂面板</h3>
+    <a href="/panel" class="item">我的面板</a>
+    <a href="/panel/create" class="item">建立新面板</a>
+</div>
+
+<!-- 電腦版：收合按鈕 -->
+<button id="collapse-btn" class="collapse-btn">«</button>
+
+<!-- 手機版：漢堡按鈕 -->
+<button id="menu-btn" class="menu-btn">☰</button>
+
+
+
+<style>
+/* Sidebar 左側固定 */
+/* -------------------------------------------------------
+   Sidebar 基本設定
+------------------------------------------------------- */
+.sidebar {
+    width: 200px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: #111827;
+    padding: 20px 10px;
+    color: white;
+    overflow-y: auto;
+    transition: width 0.3s;
+}
+
+.sidebar .title {
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: #9ca3af;
+}
+
+.sidebar .item {
+    display: block;
+    padding: 8px 10px;
+    color: #e5e7eb;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-bottom: 4px;
+}
+
+.sidebar .item:hover {
+    background: #374151;
+}
+
+.sidebar .active {
+    background: #2563eb !important;
+    color: white !important;
+}
+
+/* -------------------------------------------------------
+   Sidebar 收合狀態
+------------------------------------------------------- */
+.sidebar.collapsed {
+    width: 60px;
+}
+
+.sidebar.collapsed .title,
+.sidebar.collapsed .item {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* -------------------------------------------------------
+   主內容區塊
+------------------------------------------------------- */
+.content-with-sidebar {
+    margin-left: 220px;
+    padding: 20px;
+    transition: margin-left 0.3s;
+}
+
+.content-with-sidebar.collapsed {
+    margin-left: 80px;
+}
+
+/* -------------------------------------------------------
+   PC版 收合按鈕
+------------------------------------------------------- */
+.collapse-btn {
+    position: fixed;
+    top: 15px;
+    left: 210px;
+    z-index: 998;
+    background: #4b5563;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: left 0.3s;
+}
+
+.collapse-btn.collapsed {
+    left: 70px;
+}
+
+/* -------------------------------------------------------
+   手機版 RWD
+------------------------------------------------------- */
+@media (max-width: 768px) {
+    .sidebar {
+        position: absolute;
+        left: -220px;
+    }
+
+    .sidebar.show {
+        left: 0;
+    }
+
+    .collapse-btn {
+        display: none;
+    }
+}
+
+/* 手機漢堡按鈕 */
+.menu-btn {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 999;
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .menu-btn {
+        display: block;
+    }
+}
+
+</style>
+
+<!-- 漢堡選單（手機用） -->
+<button id="menu-btn" style="
+    display:none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 999;
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 5px;
+">
+    ☰
+</button>
+
+<script>
+
+// ===== 桌機：收合側邊欄 =====
+document.getElementById("collapse-btn").onclick = function () {
+    const sidebar = document.getElementById("sidebar");
+    const content = document.querySelector(".content-with-sidebar");
+    const btn = document.getElementById("collapse-btn");
+
+    sidebar.classList.toggle("collapsed");
+    content.classList.toggle("collapsed");
+    btn.classList.toggle("collapsed");
+
+    // 修改箭頭方向
+    btn.innerHTML = sidebar.classList.contains("collapsed") ? "»" : "«";
+};
+
+// ===== 手機：側邊欄滑出 =====
+document.getElementById("menu-btn").onclick = function () {
+    document.getElementById("sidebar").classList.toggle("show");
+};
+
+// ===== Active 自動高亮 =====
+const links = document.querySelectorAll(".sidebar .item");
+const path = window.location.pathname;
+
+links.forEach(a => {
+    if (a.getAttribute("href") === path) {
+        a.classList.add("active");
+    }
+});
+</script>
+

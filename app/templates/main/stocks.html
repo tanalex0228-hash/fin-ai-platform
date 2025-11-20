@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>📚 股票資料庫列表</h1>
+<p>以下為系統目前已收錄之股票，可點擊查看技術分析與 A2 評等。</p>
+
+<table id="stock-table" class="table">
+    <thead>
+        <tr>
+            <th>股票代號</th>
+            <th>技術面</th>
+            <th>A2 評估</th>
+        </tr>
+    </thead>
+    
+    <tbody></tbody>
+</table>
+
+<script>
+async function loadStocks() {
+    const res = await fetch("/api/stocks_in_db");
+    const data = await res.json();
+    const tbody = document.querySelector("#stock-table tbody");
+
+    data.symbols.forEach(sym => {
+        const tr = document.createElement("tr");
+
+       tr.innerHTML = `
+            <td>
+                <a href="/stock/${sym}" class="text-primary">
+                   <strong>${sym}</strong>
+                </a>
+            </td>
+
+            <td>
+                <a href="/chart/all?symbol=${sym}" class="btn btn-sm btn-primary">
+                    技術分析
+                </a>
+            </td>
+
+            <td>
+                <a href="/screener?symbol=${sym}" class="btn btn-sm btn-secondary">
+                    A2 評估
+                </a>
+            </td>
+        `;
+
+
+        tbody.appendChild(tr);
+    });
+}
+
+loadStocks();
+</script>
+
+{% endblock %}

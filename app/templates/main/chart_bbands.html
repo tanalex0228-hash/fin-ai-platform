@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+
+<h2>布林通道 Bollinger Bands</h2>
+
+<div>
+    <input id="symbol" placeholder="輸入 2330.TW">
+    <button onclick="loadBB()">載入</button>
+</div>
+
+<div id="chart" style="width:100%;height:600px;margin-top:20px;"></div>
+
+<script>
+window.onload = function () {
+    const last = localStorage.getItem("last_symbol");
+    if (last) {
+        document.getElementById("symbol").value = last;
+        loadBB();
+    }
+};
+
+async function loadBB() {
+
+    const symbol = document.getElementById("symbol").value.trim();
+    localStorage.setItem("last_symbol", symbol);
+
+    const data = await (await fetch(`/api/get_prices?symbol=${symbol}`)).json();
+    const p = data.prices;
+
+    const dates = p.map(x => x.date);
+    const close = p.map(x => x.close);
+
+    // 標準差
+    function std(arr) {
+        const mean = arr.reduce((a,b)=>a+b)/arr.length;
+        return Math.sqrt(arr.map(x => (x-mean)**2).reduce((a,b)=>a+b)/arr.length);
+    }
+
+    const ma20 = [];
+    const upper = [];
+    const lower = [];
+
+    for (let i = 0; i < close.length; i++) {
+        if (i < 20) {
+            ma20.push(null); upper.push(null); lower.push(null);
+            continue;
+        }
+        const slice = close.slice(i-20, i);
+        const avg = slice.reduce((a,b)=>a+b)/20;
+        const s = std(slice);
+
+        ma20.push(avg);
+        upper.push(avg + 2*s);
+        lower.push(avg - 2*s);
+    }
+
+    const midLine = { x: dates, y: ma20, mode:"lines", name:"MA20", line:{color:"blue"} };
+    const upperLine = { x: dates, y: upper, mode:"lines", name:"Upper", line:{color:"gray"} };
+    const lowerLine = { x: dates, y: lower, mode:"lines", name:"Lower", line:{color:"gray"} };
+
+    const priceLine = { x: dates, y: close, mode:"lines", name:"收盤價", line:{color:"black"} };
+
+    Plotly.newPlot("chart", [priceLine, midLine, upperLine, lowerLine], {
+        title: `${symbol} 布林通道`,
+        xaxis:{},
+        yaxis:{}
+    });
+}
+</script>
+
+{% endblock %}

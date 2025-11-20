@@ -5,19 +5,34 @@
     <title>FinAI Platform</title>
 </head>
 
-<body>
-    <div style="width: 800px; margin: auto;">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <ul style="color:red;">
-                {% for msg in messages %}
-                    <li>{{ msg }}</li>
-                {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
 
+
+<body>
+
+    <!-- Sidebar -->
+    {% include "components/sidebar.html" %}
+
+    <!-- 主內容區域 -->
+    <div class="content-with-sidebar">
         {% block content %}{% endblock %}
     </div>
+
 </body>
+<style>
+  .a2-help h3 {
+    margin-bottom: 8px;
+  }
+  .a2-help h4 {
+    margin-top: 16px;
+    margin-bottom: 4px;
+  }
+  .a2-help ul {
+    margin-left: 1.2rem;
+  }
+  .a2-help li {
+    margin-bottom: 2px;
+  }
+</style>
+
+
 </html>

@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- 載入 Plotly -->
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+
+<h1>回測系統</h1>
+
+<div>
+    <input id="symbol" placeholder="股票代號，例如：2330.TW">
+    <input id="short" type="number" placeholder="短均線">
+    <input id="long" type="number" placeholder="長均線">
+    <button onclick="runBacktest()">開始回測</button>
+</div>
+
+<div id="result" style="margin-top:20px;"></div>
+<div id="chart" style="width:100%; height:400px; margin-top:40px;"></div>
+
+<script>
+async function runBacktest() {
+    const symbol = document.getElementById("symbol").value.trim();
+    const short = Number(document.getElementById("short").value);
+    const long = Number(document.getElementById("long").value);
+
+    const params = {
+        symbol: symbol,
+        short: short,
+        long: long,
+        use_rsi: false,
+        use_macd: true,
+        rsi_period: 14,
+        rsi_upper: 70,
+        trend_filter: "above_long_ma"
+    };
+
+    const res = await fetch("/api/backtest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(params)
+    });
+
+    const data = await res.json();
+
+    // 顯示錯誤
+    if (!res.ok || data.error) {
+        document.getElementById("result").innerHTML =
+            `<p style="color:red;">${data.error}</p>`;
+        return;
+    }
+
+    // 顯示基本結果
+    document.getElementById("result").innerHTML = `
+        <h3>回測結果</h3>
+        <p>策略總報酬：${data.performance.total_return}</p>
+        <p>最大回撤：${data.performance.max_drawdown}</p>
+        <p>交易次數：${data.trades.length}</p>
+    `;
+
+    // ===== 取出 equity_curve =====
+    const equity = data.equity_curve;
+
+    const dates = equity.map(x => x.date);
+    const strategy = equity.map(x => x.cum_strategy);
+    const buyhold = equity.map(x => x.cum_buy_hold);
+
+    const trace1 = {
+        x: dates,
+        y: strategy,
+        type: "scatter",
+        name: "策略",
+        line: { width: 2 }
+    };
+
+    const trace2 = {
+        x: dates,
+        y: buyhold,
+        type: "scatter",
+        name: "Buy & Hold",
+        line: { width: 2, dash: "dot" }
+    };
+
+    // ================================
+    // ⭐ 修正版買賣點邏輯（保證顯示）
+    // ================================
+
+    // 日期 → 策略值的查詢表
+    const mapStrategy = Object.fromEntries(
+        equity.map(e => [e.date, e.cum_strategy])
+    );
+
+    // 所有有效日期
+    const allDates = equity.map(e => e.date);
+
+    // 格式化（去掉 T00:00:00）
+    const fmt = d => d.split("T")[0];
+
+    // 尋找最近的有效日期（如果日期不存在於 equity_curve）
+    function findClosestDate(target) {
+        if (mapStrategy[target] !== undefined) return target;
+
+        const past = allDates.filter(d => d <= target);
+        if (past.length === 0) return allDates[0];  // fallback
+        return past[past.length - 1];
+    }
+
+    // ===== 取得買賣點 =====
+    const trades = data.trades;
+
+    // 買點
+    const buy_x = trades.map(t => findClosestDate(fmt(t.entry_date)));
+    const buy_y = buy_x.map(d => mapStrategy[d]);
+
+    // 賣點
+    const sell_x = trades.map(t => findClosestDate(fmt(t.exit_date)));
+    const sell_y = sell_x.map(d => mapStrategy[d]);
+
+    const buyTrace = {
+        x: buy_x,
+        y: buy_y,
+        mode: "markers",
+        name: "Buy",
+        marker: {
+            color: "green",
+            size: 12,
+            symbol: "triangle-up"
+        }
+    };
+
+    const sellTrace = {
+        x: sell_x,
+        y: sell_y,
+        mode: "markers",
+        name: "Sell",
+        marker: {
+            color: "red",
+            size: 12,
+            symbol: "triangle-down"
+        }
+    };
+
+    // ===== 畫圖 =====
+    Plotly.newPlot("chart", [trace1, trace2, buyTrace, sellTrace], {
+        title: "策略 vs Buy & Hold",
+        xaxis: { title: "日期" },
+        yaxis: { title: "累積報酬" }
+    });
+}
+</script>
+
+{% endblock %}

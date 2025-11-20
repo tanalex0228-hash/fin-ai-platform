@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+
+<h2>MACD 指標</h2>
+
+<div>
+    <input id="symbol" placeholder="輸入 2330.TW">
+    <button onclick="loadMACD()">載入</button>
+</div>
+
+<div id="chart" style="width:100%;height:600px;margin-top:20px;"></div>
+
+<script>
+window.onload = function () {
+    const last = localStorage.getItem("last_symbol");
+    if (last) {
+        document.getElementById("symbol").value = last;
+        loadMACD();   // 🔁 這裡換成 MACD 的函式
+    }
+};
+
+
+async function loadMACD() {
+    const symbol = document.getElementById("symbol").value.trim();
+    localStorage.setItem("last_symbol", symbol);
+
+
+    const res = await fetch(`/api/get_prices?symbol=${symbol}`);
+    const prices = (await res.json()).prices;
+
+    const dates = prices.map(p => p.date);
+    const close = prices.map(p => p.close);
+
+    // EMA 計算
+    function EMA(arr, n) {
+        let k = 2 / (n + 1);
+        let ema = [arr[0]];
+        for (let i = 1; i < arr.length; i++) {
+            ema.push(arr[i] * k + ema[i-1] * (1-k));
+        }
+        return ema;
+    }
+
+    const ema12 = EMA(close, 12);
+    const ema26 = EMA(close, 26);
+
+    const dif = ema12.map((v, i) => v - ema26[i]);
+    const dea = EMA(dif, 9);
+    const hist = dif.map((v, i) => (v - dea[i]) * 2);
+
+    const histBar = { x: dates, y: hist, type:"bar", name:"MACD 柱狀" };
+    const difLine = { x: dates, y: dif, mode:"lines", name:"DIF", line:{color:"red"} };
+    const deaLine = { x: dates, y: dea, mode:"lines", name:"DEA", line:{color:"blue"} };
+
+    Plotly.newPlot("chart", [histBar, difLine, deaLine], {
+        title: `${symbol} MACD 指標`,
+        xaxis: {},
+        yaxis: {}
+    });
+}
+</script>
+
+{% endblock %}

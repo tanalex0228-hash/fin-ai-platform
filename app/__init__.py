@@ -6,12 +6,16 @@ from .main import main_bp
 from .api import api_bp
 from .models import User  # for Flask-Login
 
+
 def create_app(config_class=None):
     app = Flask(__name__, instance_relative_config=True)
 
     # 基本設定
     from config import Config
     app.config.from_object(config_class or Config)
+
+    import os
+    print("🔥 Flask 實際使用的 DB =", os.path.abspath(app.config["SQLALCHEMY_DATABASE_URI"].replace("sqlite:///", "")))
 
     # 初始化 extensions
     db.init_app(app)
@@ -25,13 +29,12 @@ def create_app(config_class=None):
 
     login_manager.login_view = "auth.login"
 
-    # 註冊 Blueprint
+    # 註冊 Blueprint（正確位置）
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(main_bp)
     app.register_blueprint(api_bp, url_prefix="/api")
 
-    print ("🔥 All Routes Loaded:")
-
-    print (app.url_map)
+    print("🔥 All Routes Loaded:")
+    print(app.url_map)
 
     return app

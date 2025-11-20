@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+
+<h2>RSI 指標</h2>
+
+<div>
+    <input id="symbol" placeholder="輸入 2330.TW">
+    <button onclick="loadRSI()">載入</button>
+</div>
+
+<div id="chart" style="width:100%;height:500px;margin-top:20px;"></div>
+
+<script>
+window.onload = function () {
+    const last = localStorage.getItem("last_symbol");
+    if (last) {
+        document.getElementById("symbol").value = last;
+        loadRSI();   // 換成 RSI 的函式
+    }
+};
+
+
+
+async function loadRSI() {
+
+    const symbol = document.getElementById("symbol").value.trim();
+    localStorage.setItem("last_symbol", symbol);
+
+
+    const res = await fetch(`/api/get_prices?symbol=${symbol}`);
+    const prices = (await res.json()).prices;
+
+    const dates = prices.map(p => p.date);
+    const close = prices.map(p => p.close);
+
+    // RSI 計算
+    function RSI(arr, period=14) {
+        let rsi = new Array(arr.length).fill(null);
+        for (let i = period; i < arr.length; i++) {
+            let gains = 0, losses = 0;
+            for (let j = i - period + 1; j <= i; j++) {
+                let diff = arr[j] - arr[j-1];
+                if (diff > 0) gains += diff;
+                else losses -= diff;
+            }
+            const RS = gains / (losses + 1e-9);
+            rsi[i] = 100 - (100 / (1 + RS));
+        }
+        return rsi;
+    }
+
+    const rsi = RSI(close, 14);
+
+    const rsiLine = {
+        x: dates, y: rsi,
+        mode:"lines",
+        name:"RSI(14)",
+        line:{color:"green"}
+    };
+
+    const overbought = {
+        x: dates, y: dates.map(_ => 70),
+        mode:"lines", name:"超買 70", line:{color:"red", dash:"dot"}
+    };
+
+    const oversold = {
+        x: dates, y: dates.map(_ => 30),
+        mode:"lines", name:"超賣 30", line:{color:"blue", dash:"dot"}
+    };
+
+    Plotly.newPlot("chart", [rsiLine, overbought, oversold], {
+        title: `${symbol} RSI 指標`,
+        xaxis: {},
+        yaxis: {}
+    });
+}
+</script>
+
+{% endblock %}

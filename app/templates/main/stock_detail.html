@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>{{ symbol }} 個股總覽</h1>
+
+<p>未來你可以在這裡放：K線圖、A2 評估摘要、技術分數、最新行情等等！</p>
+
+<a href="/chart/all?symbol={{ symbol }}" class="btn btn-primary">技術分析</a>
+<a href="/screener?symbol={{ symbol }}" class="btn btn-secondary">A2 評估</a>
+
+{% endblock %}

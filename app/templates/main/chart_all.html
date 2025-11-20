@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+
+<h2>All-in-One 技術分析</h2>
+
+<div>
+    <input id="symbol" placeholder="輸入 2330.TW">
+    <button onclick="loadAllCharts()">載入</button>
+</div>
+
+<div id="chart" style="width:100%; height:1200px; margin-top:20px;"></div>
+
+<script>
+window.onload = function () {
+    const last = localStorage.getItem("last_symbol");
+    if (last) {
+        document.getElementById("symbol").value = last;
+        loadAllCharts();
+    }
+};
+
+
+async function loadAllCharts() {
+    const symbol = document.getElementById("symbol").value.trim();
+    localStorage.setItem("last_symbol", symbol);
+
+
+    const resp = await fetch(`/api/get_prices?symbol=${symbol}`);
+    const data = await resp.json();
+    const p = data.prices;
+
+    const dates = p.map(x => x.date);
+    const open  = p.map(x => x.open);
+    const high  = p.map(x => x.high);
+    const low   = p.map(x => x.low);
+    const close = p.map(x => x.close);
+    const volume= p.map(x => x.volume);
+
+    // --------------------------
+    // MA 計算
+    // --------------------------
+    function MA(arr, period) {
+        return arr.map((v,i) => {
+            if (i < period) return null;
+            return arr.slice(i-period, i).reduce((a,b)=>a+b)/period;
+        });
+    }
+    const ma5 = MA(close, 5);
+    const ma20 = MA(close, 20);
+    const ma60 = MA(close, 60);
+
+    // --------------------------
+    // BBands 計算
+    // --------------------------
+    function std(arr) {
+        const mean = arr.reduce((a,b)=>a+b)/arr.length;
+        return Math.sqrt(arr.map(x => (x-mean)**2).reduce((a,b)=>a+b)/arr.length);
+    }
+    const bb_mid = ma20;
+    const bb_up = [];
+    const bb_low = [];
+
+    for (let i=0;i<close.length;i++){
+        if (i < 20) { bb_up.push(null); bb_low.push(null); continue; }
+        const slice = close.slice(i-20,i);
+        const m = bb_mid[i];
+        const s = std(slice);
+        bb_up.push(m + 2*s);
+        bb_low.push(m - 2*s);
+    }
+
+    // --------------------------
+    // RSI 計算
+    // --------------------------
+    function RSI(arr, period=14){
+        const rsi=[];
+        for(let i=0;i<arr.length;i++){
+            if(i<period){ rsi.push(null); continue; }
+            const slice = arr.slice(i-period, i+1);
+            let gains=0, loss=0;
+            for(let j=1;j<slice.length;j++){
+                let diff = slice[j] - slice[j-1];
+                if(diff>0) gains+=diff;
+                else loss-=diff;
+            }
+            const rs = gains / (loss + 1e-9);
+            rsi.push(100 - 100/(1+rs));
+        }
+        return rsi;
+    }
+    const rsi = RSI(close);
+
+    // --------------------------
+    // MACD
+    // --------------------------
+    function EMA(arr, span){
+        const k = 2/(span+1);
+        let ema=[arr[0]];
+        for(let i=1;i<arr.length;i++){
+            ema.push( arr[i]*k + ema[i-1]*(1-k) );
+        }
+        return ema;
+    }
+    const ema12 = EMA(close, 12);
+    const ema26 = EMA(close, 26);
+    const dif = ema12.map((v,i)=>v-ema26[i]);
+    const dea = EMA(dif, 9);
+    const hist = dif.map((v,i)=>v-dea[i]);
+
+    // --------------------------
+    // KD
+    // --------------------------
+    let K=50, D=50;
+    const Kline=[], Dline=[];
+    for (let i=0;i<close.length;i++){
+        if(i<9){ Kline.push(null); Dline.push(null); continue; }
+        const hh = Math.max(...high.slice(i-9,i));
+        const ll = Math.min(...low.slice(i-9,i));
+        const RSV = (close[i]-ll)/(hh-ll+1e-9)*100;
+        K = (2/3)*K + (1/3)*RSV;
+        D = (2/3)*D + (1/3)*K;
+        Kline.push(K);
+        Dline.push(D);
+    }
+
+    // ==============================
+    // Plotly Subplots
+    // ==============================
+    const fig = {
+        data: [
+            // ---------- 主圖 ----------
+            {
+                type:"candlestick",
+                x:dates, open:open, high:high, low:low, close:close,
+                xaxis:"x", yaxis:"y", name:"K線"
+            },
+            { x:dates, y:ma5,  type:"lines", xaxis:"x", yaxis:"y", name:"MA5" },
+            { x:dates, y:ma20, type:"lines", xaxis:"x", yaxis:"y", name:"MA20" },
+            { x:dates, y:ma60, type:"lines", xaxis:"x", yaxis:"y", name:"MA60" },
+            { x:dates, y:bb_up, type:"lines", xaxis:"x", yaxis:"y", name:"BB Upper" },
+            { x:dates, y:bb_mid,type:"lines", xaxis:"x", yaxis:"y", name:"BB Mid" },
+            { x:dates, y:bb_low,type:"lines", xaxis:"x", yaxis:"y", name:"BB Lower" },
+
+            // ---------- 成交量 ----------
+            { x:dates, y:volume, type:"bar", xaxis:"x2", yaxis:"y2", name:"Volume" },
+
+            // ---------- MACD ----------
+            { x:dates, y:dif,  type:"lines", xaxis:"x3", yaxis:"y3", name:"DIF" },
+            { x:dates, y:dea,  type:"lines", xaxis:"x3", yaxis:"y3", name:"DEA" },
+            { x:dates, y:hist, type:"bar",   xaxis:"x3", yaxis:"y3", name:"Hist" },
+
+            // ---------- RSI ----------
+            { x:dates, y:rsi,  type:"lines", xaxis:"x4", yaxis:"y4", name:"RSI" },
+
+            // ---------- KD ----------
+            { x:dates, y:Kline, type:"lines", xaxis:"x5", yaxis:"y5", name:"K" },
+            { x:dates, y:Dline, type:"lines", xaxis:"x5", yaxis:"y5", name:"D" },
+        ],
+        layout:{
+            grid:{
+                rows:5,
+                columns:1,
+                pattern:"independent"
+            },
+            height:1500,
+            title:`${symbol} — All-in-One 技術指標`
+        }
+    };
+
+    Plotly.newPlot("chart", fig);
+}
+</script>
+
+{% endblock %}

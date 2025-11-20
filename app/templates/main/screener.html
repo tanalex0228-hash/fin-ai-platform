@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+    <h2>A2 選股 Screener</h2>
+    <p class="text-muted">即時抓行情 + 技術面打分 + A2 基本面風險評級</p>
+
+    <!-- Symbols input -->
+<div class="card p-3">
+    <label>輸入股票代號（以逗號分隔）：</label>
+
+    <input id="symbols-input"
+           class="form-control"
+           placeholder="2330.TW,2317.TW"
+           value="{{ symbol if symbol else '' }}">
+
+    <button class="btn btn-primary mt-3" onclick="runScreener()">
+        開始分析
+    </button>
+</div>
+
+
+    <hr>
+
+    <!-- Table -->
+    <div id="result-area"></div>
+    <hr style="margin: 32px 0;">
+
+<section class="a2-help">
+  <h3>指標與評分說明</h3>
+  <p>
+    本頁的每一檔股票會計算兩種分數：
+    <strong>技術分數</strong> 與 <strong>A2 分數</strong>，並轉換成 <strong>等級</strong> 和 <strong>一句話評語</strong>。
+  </p>
+
+  <h4>一、技術分數（0～100）</h4>
+  <p>技術分數主要看「短期價格走勢」是否健康，由下列指標加權計算：</p>
+  <ul>
+    <li><strong>均線與趨勢</strong>：股價相對長期均線（ma_long）的高低，短期均線 ma_short 是否在 ma_long 上方。</li>
+    <li><strong>RSI</strong>：落在 50 左右代表中性，太高代表過熱、太低代表超賣。系統會偏好接近中性、逐漸轉強的區域。</li>
+    <li><strong>MACD 動能</strong>：MACD 與訊號線的差距，差距越大代表多空動能越明顯。</li>
+    <li><strong>布林通道</strong>：股價接近上軌代表偏昂貴，接近下軌代表偏便宜，靠近中軌則較為中性。</li>
+    <li><strong>成交量</strong>：與近期平均量比較，放量上漲通常加分，量縮整理會小幅扣分。</li>
+    <li><strong>K 線型態</strong>：紅 K 收在區間高位、黑 K 收在區間低位，分別代表買盤或賣壓較強。</li>
+  </ul>
+  <p>最後會把各項指標轉成 −1～+1 的分數，再加權映射成 0～100 的技術分數。</p>
+
+  <h4>二、A2 分數（0～100）</h4>
+  <p>
+    A2 是「綜合評分」，同時考慮
+    <strong>基本面</strong>、<strong>風險</strong>、<strong>流動性</strong> 與 <strong>技術位置</strong>。
+    目前的權重大致為：基本面 55%、風險 20%、流動性 15%、技術位置 10%。
+  </p>
+  <ul>
+    <li>
+      <strong>基本面（Base Factor）</strong>：預留給七因子（價值、成長、品質、動能、波動、規模、特殊因子）使用。
+      現階段可以先視為「基本面綜合評分」。
+    </li>
+    <li>
+      <strong>風險（Risk）</strong>：使用
+      <ul>
+        <li>60 日年化波動率（vol_60d）：價格越不穩定，分數越低。</li>
+        <li>一年內最大回撤（max_drawdown_1y）：歷史最大的跌幅越深，分數越低。</li>
+      </ul>
+    </li>
+    <li>
+      <strong>流動性（Liquidity）</strong>：
+      以 20 日平均成交金額（avg_turnover_20d）評估，金額越高代表越容易進出，分數越高。
+    </li>
+    <li>
+      <strong>技術位置（Trend）</strong>：
+      看最新收盤價是否位在長期均線附近且在均線之上，
+      越接近長期均線、且在上方會給較高分。
+    </li>
+  </ul>
+  <p>
+    A2 分數會根據當下有資料的項目動態重新調整權重，
+    例如目前沒有完整的最大回撤資料時，會把其他分項的權重放大來計算。
+  </p>
+
+  <h4>三、等級（Grade）</h4>
+  <p>A2 分數會對應到等級，方便快速篩選：</p>
+  <ul>
+    <li><strong>A+ / A</strong>：70 分以上，綜合條件較佳，可列入優先觀察名單。</li>
+    <li><strong>B</strong>：60～69 分，條件尚可，可視產業與個股題材進一步評估。</li>
+    <li><strong>C</strong>：50～59 分，基本面與風險普通或流動性較弱，部位不宜過大。</li>
+    <li><strong>D</strong>：50 分以下，風險較高或條件不佳，通常不列為優先標的。</li>
+  </ul>
+
+  <p style="margin-top: 12px; font-size: 0.9rem; color: #6b7280;">
+    ※ 本系統僅提供量化指標參考，並非投資建議。實際投資時仍需搭配產業研究與個人風險承受度評估。
+  </p>
+</section>
+
+</div>
+
+<script>
+function gradeColor(grade) {
+    switch (grade) {
+        case "A+": case "A": return "limegreen";
+        case "B": return "#4aa3df";
+        case "C": return "orange";
+        case "D": return "red";
+        default: return "gray";
+    }
+}
+
+async function runScreener() {
+    const symbols = document.getElementById("symbols-input").value
+        .split(",")
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+
+    if (symbols.length === 0) {
+        alert("請輸入至少一檔股票");
+        return;
+    }
+
+    // -------------- 1) 先跑技術面選股 /api/screener --------------
+    const screenerRes = await fetch("/api/screener", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            symbols: symbols,
+            period: "6mo",
+            params: {}
+        })
+    });
+
+    const screenerData = await screenerRes.json();
+    console.log("Screener 技術面:", screenerData);
+
+    const techResults = screenerData.results;
+
+    // -------------- 2) 準備 A2 基本面評分的資料 --------------
+    // A2 API 需要多種欄位，但至少要給 close / ma_long
+    const a2_input = techResults.map(r => ({
+        symbol: r.symbol,
+
+        // 技術面取得
+        close: r.latest?.close ?? null,
+        ma_long: r.latest?.ma_long ?? null,
+
+        // 清空（暫用 0 分）
+        score_f1_value: 70,
+        score_f2_growth: 70,
+        score_f3_quality: 70,
+        score_f4_momentum: 70,
+        score_f5_volatility: 70,
+        score_f6_size: 70,
+        score_f7_special: 70,
+        vol_60d: 0.2,
+        max_drawdown_1y: -0.1,
+        avg_turnover_20d: r.latest?.volume ?? 10000000,
+
+        trend_filter: "above_long_ma"
+    }));
+
+    // -------------- 3) 呼叫 A2 API /api/score_a2 --------------
+    const a2Res = await fetch("/api/score_a2", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ stocks: a2_input })
+    });
+
+    const a2Data = await a2Res.json();
+    console.log("A2 基本面結果:", a2Data);
+
+    const a2Map = {};
+    for (const row of a2Data.results) {
+        a2Map[row.symbol] = row;
+    }
+
+    // -------------- 4) 合併技術面 + A2 結果 --------------
+    const final = techResults.map(r => {
+        const a2 = a2Map[r.symbol] ?? {};
+        return {
+            symbol: r.symbol,
+            tech_score: r.score,
+            score_a2: a2.score_a2,
+            grade_a2: a2.grade_a2,
+            a2_reason: a2.a2_reason
+        };
+    });
+
+    // -------------- 5) 顯示結果 --------------
+    let html = `
+        <table class="table table-bordered table-striped mt-4">
+            <thead class="table-dark">
+                <tr>
+                    <th>股票代號</th>
+                    <th>技術分數</th>
+                    <th>A2 分數</th>
+                    <th>等級</th>
+                    <th>評語</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    for (const row of final) {
+        html += `
+        <tr>
+            <td><b>${row.symbol}</b></td>
+            <td>${row.tech_score?.toFixed(1) ?? "-"}</td>
+            <td>${row.score_a2?.toFixed(1) ?? "-"}</td>
+            <td style="color:${gradeColor(row.grade_a2)}; font-weight:bold;">
+                ${row.grade_a2 ?? "-"}
+            </td>
+            <td>${row.a2_reason ?? "-"}</td>
+        </tr>`;
+    }
+
+    html += `</tbody></table>`;
+
+    document.getElementById("result-area").innerHTML = html;
+}
+</script>
+
+{% endblock %}

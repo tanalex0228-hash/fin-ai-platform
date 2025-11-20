@@ -1,0 +1,106 @@
+nano app/services/data_price_service.py
+# app/services/data_price_service.py
+
+import yfinance as yf
+import pandas as pd
+from datetime import datetime
+from app.extensions import db
+from app.models import StockPrice
+
+# app/services/data_price_service.py
+
+import yfinance as yf
+import pandas as pd
+
+def fetch_price_from_yf(symbol, start=None, period="1y"):
+    df = yf.download(
+        symbol,
+        start=start,
+        period=None if start else period,
+        auto_adjust=True,
+        progress=False
+    )
+
+    if df.empty:
+        return df
+
+    # -----------------------------
+    # 🛠 自動處理 MultiIndex 欄位
+    # -----------------------------
+    if isinstance(df.columns, pd.MultiIndex):
+        df = df.droplevel(1, axis=1)  # 保留外層 Price: open/high/low/close/volume
+
+    # -----------------------------
+    # 🛠 標準欄位重命名
+    # -----------------------------
+    df = df.reset_index()  # date 變欄位
+
+    df.columns = ["date", "open", "high", "low", "close", "volume"]
+
+    return df
+
+def save_price_to_db(symbol, df):
+    """
+    將價格寫入 DB 的 stock_prices 表。
+    若當天資料已存在 → update，不重複寫。
+    """
+
+    for _, row in df.iterrows():
+        date = row["date"].date()
+
+        sp = StockPrice.query.filter_by(symbol=symbol, date=date).first()
+
+        if sp is None:
+            sp = StockPrice(
+                symbol=symbol,
+                date=date
+            )
+
+        sp.open = float(row["open"])
+        sp.high = float(row["high"])
+        sp.low = float(row["low"])
+        sp.close = float(row["close"])
+        sp.volume = float(row["volume"])
+
+        db.session.add(sp)
+
+    db.session.commit()
+
+
+def get_price_df(symbol):
+    """
+    從 DB 撈出日 K。
+    回傳 DataFrame (index=date, close...)
+    """
+
+    rows = (
+        StockPrice.query
+        .filter_by(symbol=symbol)
+        .order_by(StockPrice.date.asc())
+        .all()
+    )
+
+    if not rows:
+        return None
+
+    data = {
+        "date": [],
+        "close": [],
+        "open": [],
+        "high": [],
+        "low": [],
+        "volume": []
+    }
+
+    for r in rows:
+        data["date"].append(r.date)
+        data["close"].append(r.close)
+        data["open"].append(r.open)
+        data["high"].append(r.high)
+        data["low"].append(r.low)
+        data["volume"].append(r.volume)
+
+    df = pd.DataFrame(data)
+    df.set_index("date", inplace=True)
+
+    return df

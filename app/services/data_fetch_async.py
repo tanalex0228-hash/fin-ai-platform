@@ -43,16 +43,26 @@ async def fetch_price_single(symbol: str, period="1y", interval="1d"):
 
 
 async def fetch_price_batch(symbols: List[str], period="1y", interval="1d"):
-    """一次 async 抓多支股票，但每支股票會獨立下載"""
-
-    tasks = [fetch_price_single(sym, period, interval) for sym in symbols]
-    results = await asyncio.gather(*tasks)
+    """安全版：一檔一檔抓，避免 yfinance dictionary changed size bug"""
 
     out = {}
-    for sym, df in zip(symbols, results):
+
+    # 逐檔下載（避免 yfinance 多執行緒 bug）
+    for sym in symbols:
+        print(f"📌 下載 {sym} ...")
+
+        df = await fetch_price_single(sym, period, interval)
+
         if df is not None and not df.empty:
-            out[sym] = df  # 🔥 此時已經是單層 columns
+            out[sym] = df
+        else:
+            print(f"⚠️ 無資料：{sym}")
+
+        # 避免被 Yahoo 封鎖（安全延遲）
+        await asyncio.sleep(0.3)
+
     return out
+
 
 
 # -----------------------------
@@ -98,3 +108,107 @@ async def fetch_twse_t86_range(stock_num: str, start_date: datetime, end_date: d
 
     dfs = [r for r in results if r is not None]
     return pd.concat(dfs, ignore_index=True) if dfs else pd.DataFrame()
+
+
+# -------------------------------------------------
+# 🟦 async turbo 版（10～30 倍速度）
+#     多檔同時抓，不必一個個等
+# -------------------------------------------------
+async def fetch_price_batch_turbo(symbols, period="1y", interval="1d", workers=10):
+    """
+    超高速：同時丟出多個 executor 下載任務（非同步 + thread pool）
+    workers: 同時抓幾檔 (10~20 最剛好)
+    """
+
+    loop = asyncio.get_event_loop()
+    out = {}
+
+    print(f"🚀 async TURBO 模式啟動：{len(symbols)} 檔，workers={workers}")
+
+    # 建立 thread pool
+    from concurrent.futures import ThreadPoolExecutor
+    executor = ThreadPoolExecutor(max_workers=workers)
+
+    tasks = []
+    for sym in symbols:
+        tasks.append(loop.run_in_executor(
+            executor,
+            _download_yf,   # 你原本寫好的單檔抓取
+            sym,
+            period,
+            interval
+        ))
+
+    # gather → 等全部抓完
+    results = await asyncio.gather(*tasks)
+
+    # 組 output dict
+    for sym, df in zip(symbols, results):
+        if df is not None and not df.empty:
+            out[sym] = df
+        else:
+            print(f"⚠️ 無資料：{sym}")
+
+    print(f"🔥 TURBO 完成：成功 {len(out)}/{len(symbols)} 檔")
+
+    return out
+# -----------------------------
+# 🚀 Turbo Async 版（併發 workers）
+# -----------------------------
+import asyncio
+import time
+from typing import Dict
+
+async def _fetch_worker(queue, out, period, interval):
+    """工作者：負責抓單一股票"""
+    while True:
+        sym = await queue.get()
+        if sym is None:
+            queue.task_done()
+            break
+
+        print(f"📌 下載 {sym} ...")
+
+        try:
+            df = await fetch_price_single(sym, period=period, interval=interval)
+            if df is not None and not df.empty:
+                out[sym] = df
+            else:
+                print(f"⚠️ 無資料：{sym}")
+        except Exception as e:
+            print(f"❌ {sym} 抓取失敗：", e)
+
+        await asyncio.sleep(0.05)  # 安全延遲防封鎖
+        queue.task_done()
+
+
+async def fetch_price_batch_turbo(symbols, period="1y", interval="1d", workers=10) -> Dict[str, pd.DataFrame]:
+    """
+    Turbo 版：
+    ✔ 使用 queue 多工抓取
+    ✔ 10～30 倍速度
+    ✔ 安全防封鎖
+    """
+    queue = asyncio.Queue()
+    out = {}
+
+    # 將任務加入 queue
+    for sym in symbols:
+        queue.put_nowait(sym)
+
+    # 建立 workers
+    tasks = [
+        asyncio.create_task(_fetch_worker(queue, out, period, interval))
+        for _ in range(workers)
+    ]
+
+    # 放入停止訊號
+    for _ in range(workers):
+        queue.put_nowait(None)
+
+    await queue.join()
+
+    # 等待 workers 完成
+    await asyncio.gather(*tasks, return_exceptions=True)
+
+    return out
