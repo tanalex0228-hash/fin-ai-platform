@@ -5,8 +5,6 @@
     <title>FinAI Platform</title>
 </head>
 
-
-
 <body>
 
     <!-- Sidebar -->
@@ -17,7 +15,46 @@
         {% block content %}{% endblock %}
     </div>
 
+    <!-- ⭐⭐ updateToday 全站更新 JS 放在這裡 ⭐⭐ -->
+    <script>
+    async function updateToday() {
+        const btn = document.getElementById("global-update-btn");
+        const box = document.getElementById("global-update-result");
+
+        if (!btn) return;
+
+        btn.disabled = true;
+        btn.innerText = "更新中…";
+
+        try {
+            const res = await fetch("/api/update_today", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" }
+            });
+
+            const data = await res.json();
+
+            if (data.status === "success") {
+                box.innerHTML = `✔ 成功 ${data.details.success} ，失敗 ${data.details.failed.length}`;
+                box.style.color = "#10b981";
+            } else {
+                box.innerHTML = `❌ ${data.message}`;
+                box.style.color = "red";
+            }
+
+        } catch(err) {
+            box.innerHTML = "❌ 無法連線到伺服器";
+            box.style.color = "red";
+        }
+
+        btn.disabled = false;
+        btn.innerText = "🔄 更新今日資料";
+    }
+    </script>
+    <!-- ⭐⭐ JS 到這裡結束 ⭐⭐ -->
+
 </body>
+
 <style>
   .a2-help h3 {
     margin-bottom: 8px;
@@ -33,6 +70,5 @@
     margin-bottom: 2px;
   }
 </style>
-
 
 </html>

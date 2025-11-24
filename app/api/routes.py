@@ -59,6 +59,7 @@ def stock_summary():
     return jsonify({"symbol": symbol, "message": "這裡之後回傳完整摘要"})
 
 
+
 # ---------------------------------------
 # 📌 主回測 API（MA + RSI + MACD + Trend）
 # ---------------------------------------
@@ -408,3 +409,33 @@ def get_stocks_in_db():
     symbols = [s[0] for s in symbols]
 
     return {"symbols": symbols}, 200
+
+
+
+
+# ---------------------------------------
+# 📌 每日更新：批次抓 tw_top500 → update_price_history
+# ---------------------------------------
+@api_bp.route("/update_today", methods=["POST"])
+def update_today():
+    """
+    從 load_prices.py 呼叫 update_all_prices()
+    用於每日更新資料（手動）
+    """
+    try:
+        from load_prices import update_all_prices  # 注意：不改動 load_prices.py 命名
+
+        # 你原本預設只抓前 300，抓 35 年 → 完全保留
+        result = update_all_prices(limit=300, years=35)
+
+        return jsonify({
+            "status": "success",
+            "message": "每日更新完成",
+            "details": result
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500

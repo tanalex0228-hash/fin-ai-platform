@@ -49,16 +49,34 @@ def save_price_to_db(symbol: str, df: pd.DataFrame):
 
 
 
-def update_price_history(symbol: str, years: int = 5):
-    print(f"📌 正在下載 {symbol} 的歷史資料 ({years} 年)...")
+def update_price_history(symbol: str, years: int = None, period: str = "5d"):
+    """
+    每日更新用：
+    - period: 抓最近 5 天、1 天等（快速）
+    - years: 只有在你真的要抓完整歷史（例如 35 年）時才用
+    """
 
-    df = yf.download(
-        symbol,
-        period=f"{years}y",
-        interval="1d",
-        progress=False,
-        auto_adjust=False   # 必須加這個！
-    )
+    # ===== 判斷抓法 =====
+    if period:
+        print(f"📌 正在下載 {symbol} 的歷史資料 ({period})...")
+        df = yf.download(
+            symbol,
+            period=period,
+            interval="1d",
+            progress=False,
+            auto_adjust=False
+        )
+    elif years:
+        print(f"📌 正在下載 {symbol} 的歷史資料 ({years} 年)...")
+        df = yf.download(
+            symbol,
+            period=f"{years}y",
+            interval="1d",
+            progress=False,
+            auto_adjust=False
+        )
+    else:
+        raise ValueError("period 或 years 必須指定其一")
 
     if df.empty:
         print(f"⚠️ 無法下載 {symbol}")

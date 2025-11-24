@@ -18,6 +18,7 @@ echo "1 = 啟動 Flask 伺服器"
 echo "2 = 生成台股熱門 500 清單 (tw_top500.json)"
 echo "3 = 抓台股資料寫入 DB（使用 tw_top500.json）"
 echo "4 = 執行任意 Python 腳本"
+echo "5 = 執行每日更新（load_prices.py）"
 echo "q = 離開"
 echo ""
 read -p "輸入選項：" mode
@@ -40,7 +41,6 @@ case "$mode" in
     python - << 'EOF'
 import subprocess, json, os
 
-# 讀取 tw_top500.json
 with open("tw_top500.json", "r") as f:
     symbols = json.load(f)
 
@@ -60,6 +60,11 @@ EOF
     read -p "輸入 Python 檔名（例如 test.py）：" file
     echo "🔥 執行 $file ..."
     python "$file"
+    ;;
+
+5)
+    echo "🔥 執行每日更新（load_prices.py）..."
+    python load_prices.py
     ;;
 
 q)
