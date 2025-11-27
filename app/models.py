@@ -127,3 +127,97 @@ class AIPrediction(db.Model):
     prob_up = db.Column(db.Float)
     prob_down = db.Column(db.Float)
     raw_output_json = db.Column(db.Text)    # 模型輸出的向量、信心等
+
+
+# === 財報：Income Statement ===
+class FinancialIncomeStatement(db.Model):
+    __tablename__ = "financial_income_statement"
+    
+    id = db.Column(db.Integer, primary_key=True)
+    stock_id = db.Column(db.String(16), index=True, nullable=False)
+    date = db.Column(db.Date, index=True, nullable=False)
+
+    revenue = db.Column(db.Float)
+    gross_profit = db.Column(db.Float)
+    operating_income = db.Column(db.Float)
+    net_income = db.Column(db.Float)
+    eps = db.Column(db.Float)
+
+    __table_args__ = (
+        db.UniqueConstraint("stock_id", "date", name="uix_income_stock_date"),
+    )
+
+
+# === 財報：Balance Sheet ===
+class FinancialBalanceSheet(db.Model):
+    __tablename__ = "financial_balance_sheet"
+
+    id = db.Column(db.Integer, primary_key=True)
+    stock_id = db.Column(db.String(16), index=True, nullable=False)
+    date = db.Column(db.Date, index=True, nullable=False)
+
+    total_assets = db.Column(db.Float)
+    total_liabilities = db.Column(db.Float)
+    shareholders_equity = db.Column(db.Float)
+    current_assets = db.Column(db.Float)
+    current_liabilities = db.Column(db.Float)
+
+    __table_args__ = (
+        db.UniqueConstraint("stock_id", "date", name="uix_bs_stock_date"),
+    )
+
+
+# === 財報：Cashflow ===
+class FinancialCashflow(db.Model):
+    __tablename__ = "financial_cashflow"
+
+    id = db.Column(db.Integer, primary_key=True)
+    stock_id = db.Column(db.String(16), index=True, nullable=False)
+    date = db.Column(db.Date, index=True, nullable=False)
+
+    operating_cashflow = db.Column(db.Float)
+    investing_cashflow = db.Column(db.Float)
+    financing_cashflow = db.Column(db.Float)
+    free_cashflow = db.Column(db.Float)
+
+    __table_args__ = (
+        db.UniqueConstraint("stock_id", "date", name="uix_cf_stock_date"),
+    )
+
+
+# === 財報：Shares ===
+class FinancialShares(db.Model):
+    __tablename__ = "financial_shares"
+
+    id = db.Column(db.Integer, primary_key=True)
+    stock_id = db.Column(db.String(16), index=True, nullable=False)
+    date = db.Column(db.Date, index=True, nullable=False)
+
+    shares_outstanding = db.Column(db.Float)
+    capital = db.Column(db.Float)
+
+    __table_args__ = (
+        db.UniqueConstraint("stock_id", "date", name="uix_shares_stock_date"),
+    )
+
+
+
+class Fundamental(db.Model):
+    __tablename__ = 'fundamentals'
+
+    id = db.Column(db.Integer, primary_key=True)
+    symbol = db.Column(db.String, index=True)
+    date = db.Column(db.Date)
+
+
+    revenue = db.Column(db.Float)
+    eps = db.Column(db.Float)
+    roe = db.Column(db.Float)
+    roa = db.Column(db.Float)
+
+    close = db.Column(db.Float)  # ← 新增季底股價
+    
+    pe = db.Column(db.Float)
+    ps = db.Column(db.Float)
+
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow)

@@ -1,3 +1,4 @@
+#/Users/apple/Desktop/fin_ai_platform/app/main/routes.py
 from flask import Blueprint, render_template
 from flask_login import login_required, current_user
 from flask import request
@@ -64,9 +65,13 @@ def chart_volume_page():
     return render_template("main/chart_volume.html")
 
 
+# app/main/routes.py
+from app.services.stock_summary_service import get_stock_summary
+
 @main_bp.route("/stock/<symbol>")
 def stock_detail(symbol):
-    return render_template("main/stock_detail.html", symbol=symbol)
+    data = get_stock_summary(symbol)  # 🔥 把資料整合起來
+    return render_template("main/stock_detail.html", data=data)
 
 
 @main_bp.route("/stocks")

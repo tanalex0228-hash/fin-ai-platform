@@ -56,7 +56,11 @@ def load_price_df(symbol: str):
 @api_bp.route("/stock/summary", methods=["GET"])
 def stock_summary():
     symbol = request.args.get("symbol")
-    return jsonify({"symbol": symbol, "message": "這裡之後回傳完整摘要"})
+    if not symbol:
+        return jsonify({"error": "symbol required"}), 400
+
+    data = get_stock_summary(symbol)
+    return jsonify(data)
 
 
 

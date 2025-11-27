@@ -160,3 +160,28 @@ def get_price_df(symbol):
 
     df.set_index("date", inplace=True)
     return df
+
+
+
+# ---------------------------------------
+# 📌 load_price_df：stock_summary_service 需要的簡化版
+# ---------------------------------------
+def load_price_df(symbol):
+    rows = (
+        StockPrice.query
+        .filter_by(symbol=symbol)
+        .order_by(StockPrice.date.asc())
+        .all()
+    )
+
+    if not rows:
+        return pd.DataFrame()
+
+    df = pd.DataFrame([{
+        "date": r.date,
+        "close": r.close,
+        "volume": r.volume
+    } for r in rows])
+
+    df.set_index("date", inplace=True)
+    return df

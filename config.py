@@ -1,6 +1,12 @@
 # config.py
 import os
+from dotenv import load_dotenv
+
 basedir = os.path.abspath(os.path.dirname(__file__))
+
+# 載入 .env
+load_dotenv()
+
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY") or "super-secret-dev-key"
@@ -10,6 +16,5 @@ class Config:
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # 之後可以加一些你會用到的設定，例如：
-    # YFINANCE_DEFAULT_PERIOD = "1y"
-    # ASYNC_FETCH_MAX_CONCURRENCY = 10
+    # 加上 FinMind Token
+    FINMIND_TOKEN = os.getenv("FINMIND_TOKEN")

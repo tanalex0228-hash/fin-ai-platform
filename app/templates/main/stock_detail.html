@@ -1,11 +1,164 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>{{ symbol }} 個股總覽</h1>
+<div class="container mt-4">
 
-<p>未來你可以在這裡放：K線圖、A2 評估摘要、技術分數、最新行情等等！</p>
+    <!-- 標題 -->
+    <h2>{{ data.symbol }}</h2>
+    <p class="text-muted">最新更新：{{ data.date }}</p>
 
-<a href="/chart/all?symbol={{ symbol }}" class="btn btn-primary">技術分析</a>
-<a href="/screener?symbol={{ symbol }}" class="btn btn-secondary">A2 評估</a>
+    <!-- 綜合評分（技術 + 基本面） -->
+    <div class="card p-3 mb-4">
+        <h4>綜合評分（技術 + 基本面 A2）</h4>
+        <h2>
+            <strong>{{ data.score_final or 0 }}</strong> / 200
+        </h2>
+
+        <span class="badge bg-primary">
+            等級 {{ data.grade_final or "N/A" }}
+        </span>
+    </div>
+
+
+    <!-- ================================
+         技術面資訊
+    ================================= -->
+    <div class="card p-3 mb-4">
+        <h4>技術面（{{ data.technical.score or 0 }} 分）</h4>
+
+        {% set t = data.technical.latest %}
+
+        {% if t %}
+        <ul>
+            <li>MA 短期：{{ t.ma_short or "—" }}</li>
+            <li>MA 長期：{{ t.ma_long or "—" }}</li>
+            <li>RSI：{{ t.rsi or "—" }}</li>
+            <li>MACD：{{ t.macd or "—" }}</li>
+            <li>成交量均量比：{{ t.volume or "—" }} / {{ t.vol_ma or "—" }}</li>
+        </ul>
+        {% else %}
+            <p>尚無技術資料</p>
+        {% endif %}
+    </div>
+
+
+    <!-- ================================
+         基本面資訊（A2）
+    ================================= -->
+    <div class="card p-3 mb-4">
+        <h4>
+            基本面（A2：{{ data.fundamental.a2_score | round(1) }}，
+            等級 {{ data.fundamental.a2_grade or "N/A" }})
+        </h4>
+
+        {% set fm = data.fundamental.metrics %}
+        {% set fs = data.fundamental.scores %}
+
+        {% if fm %}
+        <ul>
+            <li>PE：{{ fm.pe or "—" }}（{{ fs.pe or 0 }} 分）</li>
+            <li>PB：{{ fm.pb or "—" }}（{{ fs.pb or 0 }} 分）</li>
+            <li>PS：{{ fm.ps or "—" }}（{{ fs.ps or 0 }} 分）</li>
+
+            <li>
+                ROE：
+                {% if fm.roe %}
+                    {{ (fm.roe * 100) | round(2) }} %（{{ fs.roe or 0 }} 分）
+                {% else %}
+                    —
+                {% endif %}
+            </li>
+
+            <li>
+                ROA：
+                {% if fm.roa %}
+                    {{ (fm.roa * 100) | round(2) }} %（{{ fs.roa or 0 }} 分）
+                {% else %}
+                    —
+                {% endif %}
+            </li>
+
+            <li>營收：{{ fm.revenue or "—" }}（{{ fs.revenue or 0 }} 分）</li>
+            <li>EPS：{{ fm.eps or "—" }}（{{ fs.eps or 0 }} 分）</li>
+        </ul>
+        {% else %}
+            <p>尚無基本面資料</p>
+        {% endif %}
+    </div>
+
+
+    <!-- ================================
+        風險資訊
+    ================================= -->
+    <div class="card p-3 mb-4">
+        <h4>風險（{{ data.risk.final or 0 }} 分）</h4>
+
+        {% set rr = data.risk.raw %}
+        {% set rs = data.risk.scores %}
+
+        {% if rr %}
+        <ul>
+            <li>波動：{{ rr.volatility }} %（{{ rs.vol }} 分）</li>
+            <li>最大回撤：{{ rr.max_drawdown }} %（{{ rs.mdd }} 分）</li>
+            <li>流動性（成交額）：{{ rr.turnover | round(0) }}（{{ rs.liq }} 分）</li>
+            <li>綜合風險描述：{{ data.risk.report }}</li>
+        </ul>
+        {% else %}
+            <p>尚無風險資料</p>
+        {% endif %}
+    </div>
+
+
+    <!-- ================================
+        七因子雷達圖
+    ================================= -->
+    <div class="card p-3 mb-4">
+        <h4>技術 + 基本面 七因子雷達圖</h4>
+        <div id="fundamental_radar_chart"></div>
+    </div>
+
+</div>
+
+
+<!-- Plotly -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<script type="text/template" id="radar-data">
+{
+    "categories": ["PE", "PB", "PS", "ROE", "ROA", "Revenue", "EPS"],
+    "scores": [
+        {{ data.fundamental.scores.pe | default(0) }},
+        {{ data.fundamental.scores.pb | default(0) }},
+        {{ data.fundamental.scores.ps | default(0) }},
+        {{ data.fundamental.scores.roe | default(0) }},
+        {{ data.fundamental.scores.roa | default(0) }},
+        {{ data.fundamental.scores.revenue | default(0) }},
+        {{ data.fundamental.scores.eps | default(0) }}
+    ]
+}
+</script>
+
+<script>
+const raw = document.getElementById("radar-data").innerHTML.trim();
+const radarData = JSON.parse(raw);
+
+const categories = radarData.categories;
+const scores = radarData.scores.map(v => Number(v) || 0);
+
+// 封閉雷達圖
+categories.push(categories[0]);
+scores.push(scores[0]);
+
+Plotly.newPlot("fundamental_radar_chart", [{
+    type: "scatterpolar",
+    r: scores,
+    theta: categories,
+    fill: "toself",
+    name: "{{ data.symbol }}"
+}], {
+    polar: { radialaxis: { visible: true, range: [0, 100] } },
+    showlegend: false
+});
+</script>
 
 {% endblock %}
