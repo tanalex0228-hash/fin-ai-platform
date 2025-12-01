@@ -7,7 +7,7 @@ Built to fetch, store, analyze and serve stock market data through a clean API f
 
 
 
-📌 專案目標（Project Vision）
+＃專案目標（Project Vision）
 fin-ai-platform 的長期目標是打造一個：
 可擴充
 可部署
@@ -24,7 +24,7 @@ HFT 策略原型
 的基礎架構。
 
 
-🏗 系統架構（Architecture）
+ ＃系統架構（Architecture）
 
 
 
@@ -59,7 +59,7 @@ HFT 策略原型
 
 
 
-🔧 使用技術（Tech Stack）
+ ＃使用技術（Tech Stack）
 Backend
 Flask (REST API)
 Python
@@ -79,7 +79,7 @@ Static Storage → AWS S3（可選）
 
 
 
-🗄 資料庫 Schema
+ ＃資料庫 Schema
 TABLE: prices
 -----------------------------------------
 id (int, PK, auto increment)
@@ -92,7 +92,10 @@ close (float)
 volume (bigint)
 -----------------------------------------
 Composite Key: (symbol, date) — planned
-🚀 API Endpoints
+
+
+
+ ＃API Endpoints
 POST /api/fetch_prices
 抓取股票資料 → 清洗 → 寫入資料庫。
 Request:
@@ -116,7 +119,7 @@ Response:
 
 
 
-📈 開發進度（Progress）
+ ＃開發進度（Progress）
 模組	狀態
 抓取多股票資料	✅ 完成
 MultiIndex 欄位清洗	🔄 進行中
@@ -130,7 +133,7 @@ GitHub 版本管理	✅ 完成
 
 
 
-🧭 Roadmap（未來計畫）
+ ＃Roadmap（未來計畫）
 Phase 1 — Data Engine
 整理 yfinance 欄位
 設計資料庫主鍵
@@ -196,7 +199,7 @@ Vercel 部署前端
 
 
      
-🚀 （2）開發架構（Development Architecture）
+ ＃（2）開發架構（Development Architecture）
 Your Mac (Local Development)
 ├── Python venv
 ├── Flask backend
@@ -213,7 +216,7 @@ Your Mac (Local Development)
 
 
 
-🚀 （3）邏輯架構（Logical Flow Architecture）
+ ＃（3）邏輯架構（Logical Flow Architecture）
 User → Frontend → API → Processing → Database → API → Frontend display
 更細分：
 (1) User Input (symbols / period)
@@ -228,7 +231,7 @@ User → Frontend → API → Processing → Database → API → Frontend displ
 
 
 
-🚀 （4）計算架構（Computation Architecture）
+ ＃（4）計算架構（Computation Architecture）
 Data Source Layer
   ├─ yfinance API
   └─ Web Scraper (future)
@@ -254,7 +257,7 @@ Computation Layer
 
 
 
-🚀 （5） 62 項功能（整理成架構樹）
+ ＃（5） 62 項功能（整理成架構樹）
 我將你提過的所有功能歸類：
 Ⅰ. 股票資料擷取（Data Fetching）
 多股票一次抓
@@ -326,7 +329,7 @@ K 線圖
 技術指標顯示
 策略模擬介面
 資產走勢圖（盈虧曲線）
-🚀 （6）股票評估的技術策略說明
+ ＃（6）股票評估的技術策略說明
 我整理成「策略分類系統」＋每種策略的說明。
 A. 趨勢追蹤策略（Trend Following）
 適合長線、中線
@@ -377,12 +380,6 @@ for each bar:
 夏普值
 交易筆數
 
-
-
-👨‍💻 開發者
-Alex Tan
-Finance & International Business
-Building a fintech backend from scratch.# fin-ai-platform
 
 
 
@@ -597,5 +594,15 @@ Phase 5 — Deployment（未開始）
 	•	Railway API
 	•	Vercel 前端
 	•	Cron job
+
+
+
+
+
+ ＃ 開發者
+Alex Tan
+Finance & International Business
+Building a fintech backend from scratch.# fin-ai-platform
+
 
 
