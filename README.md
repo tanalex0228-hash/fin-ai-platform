@@ -24,26 +24,37 @@ HFT 策略原型
 的基礎架構。
 
 
-
 🏗 系統架構（Architecture）
+
+
+
 ┌──────────────────────────┐
 │          Frontend        │
 │ (HTML / JavaScript /     │
-│  React - planned)        │
+│  Plotly / React - planned)│
 └───────────────▲─────────┘
                 │ REST API (JSON)
 ┌───────────────┴─────────┐
 │        Flask Backend     │
 │  /api/fetch_prices       │
 │  /api/get_prices         │
-│  /api/health             │
+│  /api/get_indicators     │
+│  /api/backtest           │
+│  /api/fundamental        │ (WIP)
 └───────────────▲─────────┘
                 │ Writes / Reads
 ┌───────────────┴─────────┐
-│        Database Layer     │
-│   MySQL (production)      │
+│       Database Layer      │
 │   SQLite (local dev)      │
-│ prices(symbol, date, ...) │
+│   MySQL (prod)            │
+│   Tables:                 │
+│     - stock_prices        │
+│     - financial_income    │
+│     - financial_balance   │
+│     - financial_cashflow  │
+│     - fundamental_factors │
+│     - indicator_snapshot  │
+│     - backtest_results    │
 └──────────────────────────┘
 
 
@@ -372,3 +383,219 @@ for each bar:
 Alex Tan
 Finance & International Business
 Building a fintech backend from scratch.# fin-ai-platform
+
+
+
+
+
+
+⸻
+
+🧱 fin-ai-platform
+
+A backend-driven financial data & quant analysis platform
+Built to fetch, store, analyze, visualize, and backtest stock market data through a clean API.
+Designed for future:
+	•	Quantitative research
+	•	Technical indicator engines
+	•	Fundamental factor modeling
+	•	Strategy backtesting
+	•	Automated trading pipelines
+	•	Personal investment dashboards
+
+⸻
+
+🔧 使用技術（Tech Stack）
+
+Backend
+	•	Flask REST API
+	•	Python
+	•	Pandas / NumPy
+	•	Technical indicator engine
+
+Database
+	•	SQLite（local dev）
+	•	MySQL（production, planned）
+
+Data Source
+	•	yfinance（股價）
+	•	FinMind API（財報 → 安全、整理後、非爬蟲）
+	•	未來加入 TWSE/MOPS backup pipeline（避免缺漏）
+
+Version Control
+	•	Git / GitHub
+
+Deployment（規劃中）
+	•	Backend → Railway
+	•	DB → PlanetScale
+	•	Frontend → Vercel
+	•	Static storage → AWS S3
+
+⸻
+
+🗄 資料庫 Schema（完整）
+
+🔹 stock_prices
+
+（你原本的版本 + 你目前真實資料）
+
+id (PK)
+stock_id (varchar)
+date (date)
+open (float)
+high (float)
+low (float)
+close (float)
+volume (bigint)
+
+約共 1,410,487+ 筆資料
+
+
+
+
+🔹 financial_income_statement（FinMind）
+
+stock_id
+date
+revenue
+gross_profit
+operating_income
+net_income
+eps
+
+
+
+🔹 financial_balance_sheet（FinMind）
+
+stock_id
+date
+total_assets
+total_liabilities
+shareholders_equity
+current_assets
+current_liabilities
+
+
+
+🔹 financial_cashflow（FinMind）
+
+stock_id
+date
+operating_cashflow
+investing_cashflow
+financing_cashflow
+free_cashflow
+
+
+
+🔹 fundamental_factors（WIP）
+
+（A2 基本面評分）
+	•	ROE
+	•	ROA
+	•	毛利率
+	•	營益率
+	•	EPS YoY
+	•	Revenue YoY
+	•	Risk Factor Score
+
+🔹 indicator_snapshot（optional）
+
+儲存技術面快照。
+
+🔹 backtest_results（已完成）
+	•	parameters
+	•	trades
+	•	cum_strategy
+	•	cum_buy_hold
+	•	drawdown
+	•	equity_curve
+
+⸻
+
+📡 API Endpoints
+
+✔ 1. Fetch prices
+
+POST /api/fetch_prices
+
+✔ 2. Get prices
+
+GET /api/get_prices?symbol=2330.TW
+
+✔ 3. Technical Indicators
+
+（後端已具備 MA/MACD/RSI/KD/BB）
+
+GET /api/get_indicators?symbol=2330.TW
+
+✔ 4. Backtest Engine
+
+POST /api/backtest
+
+回傳：
+	•	策略績效
+	•	技術指標
+	•	交易紀錄
+	•	最大回撤
+
+⸻
+
+📈 功能（整合 62 項完整版）
+
+（完全保留＋整合你之前寫的 62 項功能樹）
+
+✔ 股票資料擷取
+✔ 資料清洗
+✔ 技術指標
+✔ 交易策略模型
+✔ 回測引擎（你現在已完成）
+✔ 財報資料（FinMind）
+✔ 基本面評分（A2 系統）
+✔ 自動抓資料（tw_top500）
+✔ 雷達圖視覺化
+✔ 利潤曲線（equity curve）
+✔ K 線圖 + MA / MACD / RSI 可視化
+
+⸻
+
+📊 前端圖表
+
+使用 Plotly：
+	•	K 線（蠟燭圖）
+	•	均線
+	•	MACD
+	•	RSI
+	•	KD
+	•	雷達圖（技術+基本面）
+	•	回測績效曲線
+
+⸻
+
+🧭 Roadmap（整合舊版 + 你現在的進度）
+
+Phase 1 — Data Engine ✔（完成）
+	•	yfinance 抓取
+	•	DB 儲存
+	•	基本清洗
+
+Phase 2 — Technical Indicators ✔ 80%
+	•	MA, MACD, RSI, BB 完成
+	•	KD 修正中（已修好）
+
+Phase 3 — Fundamental Engine ✔ 70%
+	•	FinMind 三大表完成
+	•	基本面 A2 因子計算（WIP）
+
+Phase 4 — Backtesting Engine ✔（完成）
+	•	Trend filter
+	•	MACD / RSI rules
+	•	Equity curve
+	•	Drawdown
+
+Phase 5 — Deployment（未開始）
+	•	Railway API
+	•	Vercel 前端
+	•	Cron job
+
+
