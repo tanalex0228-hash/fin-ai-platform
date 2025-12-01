@@ -7,77 +7,61 @@
     <h2>{{ data.symbol }}</h2>
     <p class="text-muted">最新更新：{{ data.date }}</p>
 
-    <!-- 綜合評分（技術 + 基本面） -->
+    <!-- 綜合評分 -->
     <div class="card p-3 mb-4">
         <h4>綜合評分（技術 + 基本面 A2）</h4>
-        <h2>
-            <strong>{{ data.score_final or 0 }}</strong> / 200
-        </h2>
-
-        <span class="badge bg-primary">
-            等級 {{ data.grade_final or "N/A" }}
-        </span>
+        <h2><strong>{{ data.score_final }}</strong> / 200</h2>
+        <span class="badge bg-primary">等級 {{ data.grade_final }}</span>
     </div>
 
 
-    <!-- ================================
-         技術面資訊
-    ================================= -->
+    <!-- 技術面 -->
     <div class="card p-3 mb-4">
-        <h4>技術面（{{ data.technical.score or 0 }} 分）</h4>
+        <h4>技術面（{{ data.technical.score }} 分）</h4>
 
-        {% set t = data.technical.latest %}
+        <h4>技術面（{{ data.technical.score }} 分）</h4>
 
-        {% if t %}
+{% set t = data.technical.latest %}
+{% if t %}
         <ul>
-            <li>MA 短期：{{ t.ma_short or "—" }}</li>
-            <li>MA 長期：{{ t.ma_long or "—" }}</li>
-            <li>RSI：{{ t.rsi or "—" }}</li>
-            <li>MACD：{{ t.macd or "—" }}</li>
-            <li>成交量均量比：{{ t.volume or "—" }} / {{ t.vol_ma or "—" }}</li>
+            <li>MA 短期 (MA5)：{{ t.MA5 | round(2) if t.MA5 else "—" }}</li>
+            <li>MA 長期 (MA20)：{{ t.MA20 | round(2) if t.MA20 else "—" }}</li>
+            <li>RSI：{{ t.RSI | round(2) if t.RSI else "—" }}</li>
+            <li>MACD DIF：{{ t.MACD_DIF | round(4) if t.MACD_DIF else "—" }}</li>
+            <li>MACD DEA：{{ t.MACD_DEA | round(4) if t.MACD_DEA else "—" }}</li>
+            <li>MACD HIST：{{ t.MACD_HIST | round(4) if t.MACD_HIST else "—" }}</li>
+            <li>成交量 / 均量：{{ t.volume }} / {{ t.vol_ma | round(0) if t.vol_ma else "—" }}</li>
         </ul>
+
+        <p class="mt-2">
+            <strong>技術面分析：</strong><br>
+            {{ data.technical.comment }}
+        </p>
+
         {% else %}
             <p>尚無技術資料</p>
         {% endif %}
+
     </div>
 
 
-    <!-- ================================
-         基本面資訊（A2）
-    ================================= -->
+    <!-- 基本面（新版 A2） -->
     <div class="card p-3 mb-4">
         <h4>
-            基本面（A2：{{ data.fundamental.a2_score | round(1) }}，
-            等級 {{ data.fundamental.a2_grade or "N/A" }})
+            基本面（A2：{{ data.fundamental.a2_score }}，
+            等級 {{ data.fundamental.a2_grade }}）
         </h4>
 
-        {% set fm = data.fundamental.metrics %}
-        {% set fs = data.fundamental.scores %}
+        {% set fm = data.fundamental.metrics or {} %}
+        {% set fs = data.fundamental.scores or {} %}
 
         {% if fm %}
         <ul>
             <li>PE：{{ fm.pe or "—" }}（{{ fs.pe or 0 }} 分）</li>
             <li>PB：{{ fm.pb or "—" }}（{{ fs.pb or 0 }} 分）</li>
             <li>PS：{{ fm.ps or "—" }}（{{ fs.ps or 0 }} 分）</li>
-
-            <li>
-                ROE：
-                {% if fm.roe %}
-                    {{ (fm.roe * 100) | round(2) }} %（{{ fs.roe or 0 }} 分）
-                {% else %}
-                    —
-                {% endif %}
-            </li>
-
-            <li>
-                ROA：
-                {% if fm.roa %}
-                    {{ (fm.roa * 100) | round(2) }} %（{{ fs.roa or 0 }} 分）
-                {% else %}
-                    —
-                {% endif %}
-            </li>
-
+            <li>ROE：{{ fm.roe * 100 | round(2) if fm.roe else "—" }}（{{ fs.roe or 0 }} 分）</li>
+            <li>ROA：{{ fm.roa * 100 | round(2) if fm.roa else "—" }}（{{ fs.roa or 0 }} 分）</li>
             <li>營收：{{ fm.revenue or "—" }}（{{ fs.revenue or 0 }} 分）</li>
             <li>EPS：{{ fm.eps or "—" }}（{{ fs.eps or 0 }} 分）</li>
         </ul>
@@ -87,11 +71,9 @@
     </div>
 
 
-    <!-- ================================
-        風險資訊
-    ================================= -->
+    <!-- 風險 -->
     <div class="card p-3 mb-4">
-        <h4>風險（{{ data.risk.final or 0 }} 分）</h4>
+        <h4>風險（{{ data.risk.final }} 分）</h4>
 
         {% set rr = data.risk.raw %}
         {% set rs = data.risk.scores %}
@@ -100,8 +82,8 @@
         <ul>
             <li>波動：{{ rr.volatility }} %（{{ rs.vol }} 分）</li>
             <li>最大回撤：{{ rr.max_drawdown }} %（{{ rs.mdd }} 分）</li>
-            <li>流動性（成交額）：{{ rr.turnover | round(0) }}（{{ rs.liq }} 分）</li>
-            <li>綜合風險描述：{{ data.risk.report }}</li>
+            <li>流動性：{{ rr.turnover }}（{{ rs.liq }} 分）</li>
+            <li>綜合：{{ data.risk.report }}</li>
         </ul>
         {% else %}
             <p>尚無風險資料</p>
@@ -109,12 +91,10 @@
     </div>
 
 
-    <!-- ================================
-        七因子雷達圖
-    ================================= -->
+    <!-- 雷達圖 -->
     <div class="card p-3 mb-4">
-        <h4>技術 + 基本面 七因子雷達圖</h4>
-        <div id="fundamental_radar_chart"></div>
+        <h4>七因子基本面雷達圖</h4>
+        <div id="fundamental_radar_chart" style="width:100%; height:400px;"></div>
     </div>
 
 </div>
@@ -123,36 +103,26 @@
 <!-- Plotly -->
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
-<script type="text/template" id="radar-data">
-{
-    "categories": ["PE", "PB", "PS", "ROE", "ROA", "Revenue", "EPS"],
-    "scores": [
-        {{ data.fundamental.scores.pe | default(0) }},
-        {{ data.fundamental.scores.pb | default(0) }},
-        {{ data.fundamental.scores.ps | default(0) }},
-        {{ data.fundamental.scores.roe | default(0) }},
-        {{ data.fundamental.scores.roa | default(0) }},
-        {{ data.fundamental.scores.revenue | default(0) }},
-        {{ data.fundamental.scores.eps | default(0) }}
-    ]
-}
-</script>
-
 <script>
-const raw = document.getElementById("radar-data").innerHTML.trim();
-const radarData = JSON.parse(raw);
-
-const categories = radarData.categories;
-const scores = radarData.scores.map(v => Number(v) || 0);
+const radarCategories = ["PE", "PB", "PS", "ROE", "ROA", "Revenue", "EPS"];
+const radarScores = [
+    {{ fs.pe or 0 }},
+    {{ fs.pb or 0 }},
+    {{ fs.ps or 0 }},
+    {{ fs.roe or 0 }},
+    {{ fs.roa or 0 }},
+    {{ fs.revenue or 0 }},
+    {{ fs.eps or 0 }}
+];
 
 // 封閉雷達圖
-categories.push(categories[0]);
-scores.push(scores[0]);
+radarCategories.push(radarCategories[0]);
+radarScores.push(radarScores[0]);
 
 Plotly.newPlot("fundamental_radar_chart", [{
     type: "scatterpolar",
-    r: scores,
-    theta: categories,
+    r: radarScores,
+    theta: radarCategories,
     fill: "toself",
     name: "{{ data.symbol }}"
 }], {

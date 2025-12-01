@@ -1,45 +1,42 @@
-#/Users/apple/Desktop/fin_ai_platform/app/main/routes.py
-from flask import Blueprint, render_template
+# /Users/apple/Desktop/fin_ai_platform/app/main/routes.py
+
+from flask import Blueprint, render_template, request
 from flask_login import login_required, current_user
-from flask import request
 
-
-# 這裡正確建立 Blueprint（不要在 __init__.py import）
+# Blueprint
 main_bp = Blueprint("main", __name__, template_folder="../templates")
 
-# -------- Dashboard --------
+
+# ====================
+# Dashboard
+# ====================
 @main_bp.route("/")
 @login_required
 def dashboard():
     return render_template("main/dashboard.html", user=current_user)
 
 
-
-
-
-# -------- Backtest Page --------
+# ====================
+# Backtest
+# ====================
 @main_bp.route("/backtest")
 @login_required
 def backtest_page():
     return render_template("main/backtest.html", user=current_user)
 
 
-
-
-# -------- Screener --------
-from flask import request
-
+# ====================
+# Screener
+# ====================
 @main_bp.route("/screener")
 def page_screener():
     symbol = request.args.get("symbol")
     return render_template("main/screener.html", symbol=symbol)
 
 
-
-
-
-
-# -------- Charts --------
+# ====================
+# Charts
+# ====================
 @main_bp.route("/chart")
 def chart_page():
     return render_template("main/chart.html")
@@ -64,23 +61,26 @@ def chart_bbands_page():
 def chart_volume_page():
     return render_template("main/chart_volume.html")
 
-
-# app/main/routes.py
-from app.services.stock_summary_service import get_stock_summary
-
-@main_bp.route("/stock/<symbol>")
-def stock_detail(symbol):
-    data = get_stock_summary(symbol)  # 🔥 把資料整合起來
-    return render_template("main/stock_detail.html", data=data)
-
-
-@main_bp.route("/stocks")
-def page_stocks():
-    return render_template("main/stocks.html")
-
-
-
 @main_bp.route("/chart/all")
 def chart_all_page():
     symbol = request.args.get("symbol")
     return render_template("main/chart_all.html", symbol=symbol)
+
+
+# ====================
+# Stock Detail / Summary
+# ====================
+from app.services.stock_summary_service import get_stock_summary
+
+@main_bp.route("/stock/<symbol>")
+def stock_detail(symbol):
+    data = get_stock_summary(symbol)
+    return render_template("main/stock_detail.html", data=data)
+
+
+# ====================
+# Stocks Page
+# ====================
+@main_bp.route("/stocks")
+def page_stocks():
+    return render_template("main/stocks.html")

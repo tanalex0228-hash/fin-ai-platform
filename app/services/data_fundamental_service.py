@@ -314,6 +314,82 @@ def _clean_sid(sid: str) -> str:
     return sid.replace(".TW", "").replace(".TWO", "")
 
 
+
+
+# ======================================================
+# ⭐ 七因子 scoring function（全域可用）
+# ======================================================
+
+def score_pe(x):
+    if x is None or x <= 0:
+        return 0
+    if x < 10:   return 100
+    if x < 20:   return 80
+    if x < 30:   return 60
+    if x < 40:   return 40
+    return 20
+
+def score_pb(x):
+    if x is None or x <= 0:
+        return 0
+    if x < 1:   return 100
+    if x < 2:   return 80
+    if x < 3:   return 60
+    if x < 4:   return 40
+    return 20
+
+def score_ps(x):
+    if x is None or x <= 0:
+        return 0
+    if x < 1:   return 100
+    if x < 2:   return 80
+    if x < 3:   return 60
+    if x < 5:   return 40
+    return 20
+
+def score_roe(x):
+    if x is None: return 0
+    x *= 100
+    if x >= 20: return 100
+    if x >= 15: return 90
+    if x >= 10: return 75
+    if x >= 5:  return 60
+    if x >= 0:  return 40
+    return 10
+
+def score_roa(x):
+    if x is None: return 0
+    x *= 100
+    if x >= 10: return 100
+    if x >= 7:  return 90
+    if x >= 5:  return 75
+    if x >= 3:  return 60
+    if x >= 0:  return 40
+    return 10
+
+import math
+def score_revenue(x):
+    if x is None: return 0
+    try:
+        s = math.log10(max(x, 1))
+    except ValueError:
+        return 0
+    s_norm = (s - 5) / (9 - 5)
+    return max(0, min(100, int(s_norm * 100)))
+
+def score_eps(x):
+    if x is None: return 0
+    if x >= 10: return 100
+    if x >= 5:  return 90
+    if x >= 3:  return 80
+    if x >= 1:  return 60
+    if x >= 0:  return 40
+    return 10
+
+
+
+
+
 def calc_fundamental_factors(stock_id):
     """
     回傳：
@@ -400,86 +476,9 @@ def calc_fundamental_factors(stock_id):
     }
 
     # ----- 七因子分數 -----
-    def score_pe(x):
-        if x is None or x <= 0:
-            return 0
-        if x < 10:   return 100
-        if x < 20:   return 80
-        if x < 30:   return 60
-        if x < 40:   return 40
-        return 20
+       # ----- A2 動態權重加權分數 -----
+    a2_score, final_scores, final_weights = calc_a2_dynamic(metrics)
 
-    def score_pb(x):
-        if x is None or x <= 0:
-            return 0
-        if x < 1:   return 100
-        if x < 2:   return 80
-        if x < 3:   return 60
-        if x < 4:   return 40
-        return 20
-
-
-    def score_ps(x):
-        if x is None or x <= 0:
-            return 0
-        if x < 1:   return 100
-        if x < 2:   return 80
-        if x < 3:   return 60
-        if x < 5:   return 40
-        return 20
-
-    def score_roe(x):
-        if x is None: return 0
-        x *= 100
-        if x >= 20: return 100
-        if x >= 15: return 90
-        if x >= 10: return 75
-        if x >= 5:  return 60
-        if x >= 0:  return 40
-        return 10
-
-    def score_roa(x):
-        if x is None: return 0
-        x *= 100
-        if x >= 10: return 100
-        if x >= 7:  return 90
-        if x >= 5:  return 75
-        if x >= 3:  return 60
-        if x >= 0:  return 40
-        return 10
-
-    import math
-    def score_revenue(x):
-        if x is None: return 0
-        try:
-            s = math.log10(max(x, 1))
-        except ValueError:
-            return 0
-        s_norm = (s - 5) / (9 - 5)
-        return max(0, min(100, int(s_norm * 100)))
-
-    def score_eps(x):
-        if x is None: return 0
-        if x >= 10: return 100
-        if x >= 5:  return 90
-        if x >= 3:  return 80
-        if x >= 1:  return 60
-        if x >= 0:  return 40
-        return 10
-
-    scores = {
-        "pe": score_pe(pe),
-        "pb": score_pb(pb),
-        "ps": score_ps(ps),
-        "roe": score_roe(roe),
-        "roa": score_roa(roa),
-        "revenue": score_revenue(revenue),
-        "eps": score_eps(eps),
-    }
-
-    # ----- A2 平均分 -----
-    valid_scores = [v for v in scores.values() if v is not None]
-    a2_score = sum(valid_scores) / len(valid_scores) if valid_scores else None
 
     def grade(score):
         if score is None: return None
@@ -494,7 +493,69 @@ def calc_fundamental_factors(stock_id):
 
     return {
         "metrics": metrics,
-        "scores": scores,
+        "scores": final_scores,
+        "final_weights": final_weights,
         "a2_score": a2_score,
         "a2_grade": a2_grade,
     }
+
+
+
+# ======================================================
+# ⭐ 動態權重 A2 打分：缺資料 → 自動調整權重
+# ======================================================
+
+def calc_a2_dynamic(metrics):
+    """
+    metrics = {
+        "pe": ...,
+        "pb": ...,
+        "ps": ...,
+        "roe": ...,
+        "roa": ...,
+        "revenue": ...,
+        "eps": ...
+    }
+    """
+
+    # --- 原始因子分數（沿用你的 score_xx） ---
+    scores = {
+        "pe": score_pe(metrics.get("pe")),
+        "pb": score_pb(metrics.get("pb")),
+        "ps": score_ps(metrics.get("ps")),
+        "roe": score_roe(metrics.get("roe")),
+        "roa": score_roa(metrics.get("roa")),
+        "revenue": score_revenue(metrics.get("revenue")),
+        "eps": score_eps(metrics.get("eps")),
+    }
+
+    # --- 權重（你可調整） ---
+    weights = {
+        "pe": 20,
+        "pb": 10,
+        "ps": 10,
+        "roe": 20,
+        "roa": 20,
+        "revenue": 10,
+        "eps": 10,
+    }
+
+    # --- 只保留有資料的（None 不採計） ---
+    valid_scores = {k: v for k, v in scores.items() if metrics.get(k) is not None}
+    valid_weights = {k: weights[k] for k in valid_scores.keys()}
+
+    if not valid_scores:
+        return 0, scores, {}
+
+    # --- 正規化權重：讓總權重 = 1 ---
+    total_w = sum(valid_weights.values())
+    norm_w = {k: valid_weights[k] / total_w for k in valid_weights}
+
+    # --- 加權平均 ---
+    final = 0
+    for k in valid_scores:
+        final += valid_scores[k] * norm_w[k]
+
+    final = round(final, 2)
+
+    return final, scores, norm_w

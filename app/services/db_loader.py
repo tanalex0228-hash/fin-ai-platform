@@ -1,87 +1,39 @@
-import yfinance as yf
-import pandas as pd
-from app.extensions import db
-from app.models import StockPrice
+# app/services/db_loader.py
 
-def clean_columns(df):
+import json
+import time
+
+from app.services.data_price_service import update_price_history
+
+
+def load_symbols_from_file(path="tw_top500.json"):
+    with open(path, "r") as f:
+        syms = json.load(f)
+
+    # 確保都有 .TW 尾巴（簡單版）
+    norm = []
+    for s in syms:
+        s = s.strip()
+        if s.endswith(".TW") or s.endswith(".TWO"):
+            norm.append(s)
+        else:
+            # 這裡你可以自己決定要不要補 .TW
+            norm.append(s + ".TW")
+    return norm
+
+
+def update_all_prices(start_date="2018-01-01", limit=None, sleep_sec=0.3):
     """
-    將 MultiIndex 欄位轉成單層欄位並小寫化
+    用 FinMind 依序更新 tw_top500.json 裡面的標的
+    - limit: 最多更新幾檔（避免一次打爆 API）
+    - sleep_sec: 每檔之間稍微 sleep，保險用
     """
-    if isinstance(df.columns, pd.MultiIndex):
-        df.columns = [c[0].lower() for c in df.columns]
-    else:
-        df.columns = [str(c).lower() for c in df.columns]
-    return df
+    symbols = load_symbols_from_file("tw_top500.json")
 
+    for i, sym in enumerate(symbols):
+        if limit is not None and i >= limit:
+            print(f"⏹ 已達 limit={limit}，停止")
+            break
 
-def save_price_to_db(symbol: str, df: pd.DataFrame):
-    df = df.reset_index()
-    df = clean_columns(df)
-
-    for _, row in df.iterrows():
-        date = row["date"]
-
-        # --- 若資料已存在 → 跳過 ---
-        exists = StockPrice.query.filter_by(symbol=symbol, date=date).first()
-        if exists:
-            continue
-
-        # --- 計算報酬 ---
-        open_ = row.get("open")
-        close_ = row.get("close")
-        return_pct = (close_ / open_ - 1) if (open_ and open_ != 0) else None
-
-        price = StockPrice(
-            symbol=symbol,
-            date=date,
-            open=open_,
-            high=row.get("high"),
-            low=row.get("low"),
-            close=close_,
-            volume=row.get("volume"),
-            return_pct=return_pct,
-            log_return=None,  # 未來可補：np.log(close/open)
-        )
-
-        db.session.add(price)
-
-    db.session.commit()
-
-
-
-def update_price_history(symbol: str, years: int = None, period: str = "5d"):
-    """
-    每日更新用：
-    - period: 抓最近 5 天、1 天等（快速）
-    - years: 只有在你真的要抓完整歷史（例如 35 年）時才用
-    """
-
-    # ===== 判斷抓法 =====
-    if period:
-        print(f"📌 正在下載 {symbol} 的歷史資料 ({period})...")
-        df = yf.download(
-            symbol,
-            period=period,
-            interval="1d",
-            progress=False,
-            auto_adjust=False
-        )
-    elif years:
-        print(f"📌 正在下載 {symbol} 的歷史資料 ({years} 年)...")
-        df = yf.download(
-            symbol,
-            period=f"{years}y",
-            interval="1d",
-            progress=False,
-            auto_adjust=False
-        )
-    else:
-        raise ValueError("period 或 years 必須指定其一")
-
-    if df.empty:
-        print(f"⚠️ 無法下載 {symbol}")
-        return
-
-    df = clean_columns(df)
-    save_price_to_db(symbol, df)
-    print(f"✅ {symbol} 寫入資料庫完成！共 {len(df)} 筆")
+        update_price_history(sym, start_date=start_date)
+        time.sleep(sleep_sec)

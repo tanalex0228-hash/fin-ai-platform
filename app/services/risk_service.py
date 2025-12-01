@@ -1,5 +1,4 @@
-# app/services/risk_service.py
-
+# app/services/
 import pandas as pd
 import numpy as np
 from app.models import StockPrice
