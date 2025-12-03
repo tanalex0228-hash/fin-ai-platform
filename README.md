@@ -31,13 +31,13 @@ HFT 策略原型
 ┌──────────────────────────┐
 │          Frontend        │
 │ (HTML / JavaScript /     │
-│  Plotly / React - planned)│
+│ Plotly / React - planned)│
 └───────────────▲─────────┘
                 │ REST API (JSON)
 ┌───────────────┴─────────┐
-│        Flask Backend     │
-│  /api/fetch_prices       │
-│  /api/get_prices         │
+│        Flask Backend    │
+│  /api/fetch_prices      │
+│  /api/get_prices        │
 │  /api/get_indicators     │
 │  /api/backtest           │
 │  /api/fundamental        │ (WIP)
@@ -259,6 +259,7 @@ Computation Layer
 
  ＃（5） 62 項功能（整理成架構樹）
 我將你提過的所有功能歸類：
+
 Ⅰ. 股票資料擷取（Data Fetching）
 多股票一次抓
 自動填補缺漏資料
@@ -270,6 +271,7 @@ K 線資料
 現金殖利率
 ETF 成分股
 財報 API（未來）
+
 Ⅱ. 資料清洗（Data Cleaning）
 MultiIndex 換單層欄位
 日期格式統一
@@ -278,6 +280,7 @@ NaN 去除
 自動去除重複資料
 資料完整性檢查
 時區統一
+
 Ⅲ. 資料庫功能（Database Layer）
 MySQL Schema 設計
 主鍵（symbol + date）
@@ -287,6 +290,7 @@ MySQL Schema 設計
 排序查詢
 資料更新（upsert）
 SQLite → MySQL 遷移
+
 Ⅳ. 技術指標（Indicators Engine）
 移動平均（MA / EMA）
 RSI
@@ -297,6 +301,7 @@ KD 指標
 ATR
 OBV
 VWAP
+
 Ⅴ. 策略模型（Strategy Engine）
 黃金交叉 / 死亡交叉
 突破策略
@@ -306,6 +311,7 @@ RSI 超買超賣
 價量背離
 波段順勢策略
 趨勢反轉策略
+
 Ⅵ. 回測（Backtesting）
 Entry / Exit
 止盈
@@ -324,13 +330,16 @@ get_backtest
 get_health
 分頁查詢
 symbol 列表
+
 Ⅷ. 前端功能（Future UI）
 K 線圖
 技術指標顯示
 策略模擬介面
 資產走勢圖（盈虧曲線）
+
  ＃（6）股票評估的技術策略說明
 我整理成「策略分類系統」＋每種策略的說明。
+
 A. 趨勢追蹤策略（Trend Following）
 適合長線、中線
 核心思想：抱著順勢，避免逆勢
@@ -341,6 +350,7 @@ MACD 柱狀體翻正/翻負
 邏輯：
 若 MA5 > MA20 → 多頭
 若 MA5 < MA20 → 空頭
+
 B. 超買超賣策略（Mean Reversion）
 適合短線
 核心思想：價格偏離均值後會回到平均
@@ -348,17 +358,20 @@ B. 超買超賣策略（Mean Reversion）
 RSI < 30 → 可能反彈
 RSI > 70 → 可能回落
 布林通道下緣 → 反彈機率高
+
 C. 價量分析（Volume-Based Strategy）
 適合波段交易
 核心思想：量先於價
 方法：
 催量突破 = 趨勢確立
 OBV 上升代表買盤強
+
 D. 波動度策略（Volatility Strategy）
 適合短線
 方法：
 ATR 高 → 不適合進場
 ATR 低 → 適合突破策略
+
 E. 多因子策略（Multi-Factor Modeling）
 適合長期投資
 涉及：
@@ -366,6 +379,7 @@ E. 多因子策略（Multi-Factor Modeling）
 成長因子（EPS、營收）
 動能因子（12 個月收益）
 風險因子（Beta、波動度）
+
 F. 量化回測流程（Backtest Logic）
 for each bar:
     check entry
@@ -373,6 +387,8 @@ for each bar:
         update stop loss/take profit
         check exit
     update portfolio value
+
+
 結果包含：
 勝率
 年化報酬
