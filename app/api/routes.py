@@ -219,71 +219,133 @@ def api_backtest():
 def fetch_prices():
     import time
     import pandas as pd
-    import numpy as np
+    import yfinance as yf
+    from datetime import date, timedelta
 
     data = request.get_json() or {}
     symbols = data.get("symbols", [])
-    period = data.get("period", "1mo")
+    period = data.get("period", "6mo")
 
     if not symbols:
         return jsonify({"error": "symbols required"}), 400
 
+    # period → days
+    p = str(period).strip().lower()
+    days_map = {"1mo": 35, "3mo": 120, "6mo": 220, "1y": 370, "2y": 760, "5y": 1900}
+    days = days_map.get(p, 220)
+
     t0 = time.time()
     total_saved = 0
     failed = []
-    debug_cols = {}
+    debug = {}
+
+    # FinMind client（只建立一次）
+    finmind_token = current_app.config.get("FINMIND_TOKEN") or ""
+    fm = None
+    if finmind_token:
+        try:
+            from FinMind.data import DataLoader
+            fm = DataLoader()
+            fm.login_by_token(finmind_token)
+        except Exception as e:
+            fm = None
+            failed.append(f"FinMind init failed: {e}")
 
     for sym in symbols:
+        sym_clean = sym.strip().upper()
+        debug[sym_clean] = {"source": None, "cols": []}
+
+        # ---------- A) 先試 yfinance ----------
+        df = None
         try:
-            df = yf.download(
-                sym,
-                period=period,
+            df_yf = yf.download(
+                sym_clean,
+                period=p,
                 interval="1d",
                 auto_adjust=False,
                 progress=False,
                 threads=False,
             )
-            if df is None or df.empty:
-                failed.append(f"{sym}: empty from yfinance")
-                debug_cols[sym] = []
+            if df_yf is not None and not df_yf.empty:
+                df = df_yf.copy()
+                df.columns = [str(c).strip() for c in df.columns]
+                need = {"Open", "High", "Low", "Close", "Volume"}
+                if need.issubset(set(df.columns)):
+                    debug[sym_clean]["source"] = "yfinance"
+                    debug[sym_clean]["cols"] = list(df.columns)[:20]
+                else:
+                    df = None
+        except Exception:
+            df = None
+
+        # ---------- B) yfinance 空 → 改用 FinMind ----------
+        if df is None:
+            if fm is None:
+                failed.append(f"{sym_clean}: yfinance empty, FinMind not ready (missing token?)")
                 continue
 
-            # yfinance 常見欄位：Open High Low Close Adj Close Volume
-            debug_cols[sym] = [str(c) for c in df.columns][:30]
+            # FinMind stock_id 不要 .TW/.TWO
+            stock_id = sym_clean.replace(".TW", "").replace(".TWO", "")
 
-            # 欄位標準化（確保是 Open/High/Low/Close/Volume）
-            df = df.copy()
-            df.columns = [str(c).strip() for c in df.columns]
-            rename_map = {
-                "open": "Open",
-                "high": "High",
-                "low": "Low",
-                "close": "Close",
-                "volume": "Volume",
-                "adj close": "Adj Close",
-                "adjclose": "Adj Close",
-                "adj_close": "Adj Close",
-            }
-            df.rename(columns={c: rename_map.get(c.lower(), c) for c in df.columns}, inplace=True)
+            try:
+                end = date.today()
+                start = end - timedelta(days=days)
 
-            need = {"Open", "High", "Low", "Close", "Volume"}
-            if not need.issubset(set(df.columns)):
-                failed.append(f"{sym}: missing OHLCV got={list(df.columns)[:30]}")
+                df_fm = fm.taiwan_stock_daily(
+                    stock_id=stock_id,
+                    start_date=str(start),
+                    end_date=str(end)
+                )
+
+                if df_fm is None or df_fm.empty:
+                    failed.append(f"{sym_clean}: empty from FinMind")
+                    continue
+
+                # FinMind 欄位轉成 ETL 需要的 Open/High/Low/Close/Volume
+                # 常見欄位：date, open, max, min, close, Trading_Volume ...
+                col_map = {}
+                for c in df_fm.columns:
+                    lc = str(c).lower()
+                    if lc == "open": col_map[c] = "Open"
+                    elif lc in ("max", "high"): col_map[c] = "High"
+                    elif lc in ("min", "low"): col_map[c] = "Low"
+                    elif lc == "close": col_map[c] = "Close"
+                    elif lc in ("trading_volume", "volume"): col_map[c] = "Volume"
+
+                df_fm = df_fm.rename(columns=col_map)
+
+                need = {"Open", "High", "Low", "Close", "Volume", "date"}
+                if not need.issubset(set(df_fm.columns)):
+                    failed.append(f"{sym_clean}: FinMind cols not match, got={list(df_fm.columns)[:30]}")
+                    continue
+
+                df_fm["date"] = pd.to_datetime(df_fm["date"])
+                df_fm = df_fm.sort_values("date")
+                df_fm = df_fm.set_index("date")[["Open", "High", "Low", "Close", "Volume"]]
+
+                df = df_fm
+                debug[sym_clean]["source"] = "finmind"
+                debug[sym_clean]["cols"] = list(df.columns)
+
+            except Exception as e:
+                failed.append(f"{sym_clean}: FinMind error: {e}")
                 continue
 
-            saved_now = etl.save_price_df_to_db(sym.strip().upper(), df)
+        # ---------- 寫入 DB ----------
+        try:
+            saved_now = etl.save_price_df_to_db(sym_clean, df)
             total_saved += saved_now
-
         except Exception as e:
-            failed.append(f"{sym}: {e}")
+            failed.append(f"{sym_clean}: save failed: {e}")
 
     return jsonify({
         "status": "success",
         "rows_saved": total_saved,
         "failed": failed,
-        "debug_cols": debug_cols,
+        "debug": debug,
         "elapsed": round(time.time() - t0, 2),
     })
+
 
 
 
