@@ -15,11 +15,22 @@ def create_app(config_class=None):
     app.config.from_object(config_class or Config)
 
     import os
-    print("🔥 Flask 實際使用的 DB =", os.path.abspath(app.config["SQLALCHEMY_DATABASE_URI"].replace("sqlite:///", "")))
+
+    # ✅ 確保 instance 資料夾存在（Railway 容器常常沒有）
+    os.makedirs(app.instance_path, exist_ok=True)
+
+    print(
+        "🔥 Flask 實際使用的 DB =",
+        os.path.abspath(app.config["SQLALCHEMY_DATABASE_URI"].replace("sqlite:///", ""))
+    )
 
     # 初始化 extensions
     db.init_app(app)
     login_manager.init_app(app)
+
+    # ✅ 讓 gunicorn 啟動時也會建表（不再噴 no such table）
+    with app.app_context():
+        db.create_all()
 
     # 使用者登入設定
     @login_manager.user_loader
