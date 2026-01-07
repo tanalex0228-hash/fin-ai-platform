@@ -605,3 +605,140 @@ def debug_sqlite_path():
         "exists": os.path.exists(p),
         "cwd": os.getcwd()
     })
+
+
+
+# ---------------------------------------
+# 📌 批次抓 tw_top500.json 並寫入 DB
+# ---------------------------------------
+@api_bp.route("/fetch_top500", methods=["POST"])
+def fetch_top500():
+    import asyncio, time, os, json
+    from flask import current_app
+
+    t0 = time.time()
+    data = request.get_json() or {}
+    period = data.get("period", "1y")        # 例如 "6mo" / "1y" / "max"
+    limit = int(data.get("limit", 500))      # 先允許你測 50/100/500
+    batch = int(data.get("batch", 30))       # 每批抓幾檔（太大容易慢/timeout）
+
+    # 1) 讀取 tw_top500.json（在專案根目錄）
+    root_dir = os.path.abspath(os.path.join(current_app.root_path, ".."))  # /app/..
+    json_path = os.path.join(root_dir, "tw_top500.json")
+
+    if not os.path.exists(json_path):
+        return jsonify({
+            "status": "error",
+            "message": f"tw_top500.json not found at {json_path}"
+        }), 400
+
+    with open(json_path, "r", encoding="utf-8") as f:
+        raw = json.load(f)
+
+    # 你 json 可能是 list 或 dict（保險處理）
+    if isinstance(raw, dict):
+        # 常見可能是 {"symbols":[...]} 或 {"data":[...]}
+        symbols = raw.get("symbols") or raw.get("data") or []
+    else:
+        symbols = raw
+
+    # 2) 正規化 symbols（盡量轉成 2330.TW）
+    norm = []
+    for x in symbols:
+        s = str(x).strip()
+        if not s:
+            continue
+        # 如果只給 "2330" 就補 ".TW"
+        if s.isdigit():
+            s = f"{s}.TW"
+        norm.append(s.upper())
+
+    # 去重 + 取前 limit
+    seen = set()
+    norm = [s for s in norm if not (s in seen or seen.add(s))]
+    norm = norm[:limit]
+
+    if not norm:
+        return jsonify({"status": "error", "message": "no symbols loaded"}), 400
+
+    total_saved = 0
+    failed = []
+    debug = {}
+
+    # 3) 分批抓（避免一次抓 500 檔把 request 撐爆）
+    for i in range(0, len(norm), batch):
+        chunk = norm[i:i+batch]
+
+        try:
+            price_dict = asyncio.run(
+                fetch_price_batch_turbo(
+                    chunk,
+                    period=period,
+                    interval="1d",
+                    workers=10
+                )
+            )
+        except Exception as e:
+            failed.append(f"batch_{i//batch}: fetch_error: {e}")
+            continue
+
+        for sym, df in price_dict.items():
+            if df is None or df.empty:
+                failed.append(f"{sym}: empty")
+                debug[sym] = {"empty": True}
+                continue
+
+            # MultiIndex 處理（你之前那套）
+            if isinstance(df.columns, pd.MultiIndex):
+                try:
+                    df_try = None
+                    try:
+                        df_try = df.xs(sym, level=1, axis=1)
+                    except:
+                        pass
+                    if df_try is not None and not df_try.empty:
+                        df = df_try
+                    else:
+                        df.columns = [" ".join([str(x) for x in col if x is not None]).strip() for col in df.columns]
+                except Exception as e:
+                    failed.append(f"{sym}: multiindex_fail {e}")
+                    continue
+
+            df = df.copy()
+            df.columns = [str(c).strip() for c in df.columns]
+
+            # 欄位映射
+            rename_map = {
+                "open": "Open",
+                "high": "High",
+                "low": "Low",
+                "close": "Close",
+                "volume": "Volume",
+                "adj close": "Adj Close",
+                "adj_close": "Adj Close",
+            }
+            df.rename(columns={c: rename_map.get(c.lower(), c) for c in df.columns}, inplace=True)
+
+            need = {"Open", "High", "Low", "Close", "Volume"}
+            if not need.issubset(set(df.columns)):
+                failed.append(f"{sym}: missing_cols {list(df.columns)}")
+                debug[sym] = {"cols": list(df.columns)}
+                continue
+
+            try:
+                saved_now = etl.save_price_df_to_db(sym, df)
+                total_saved += int(saved_now)
+                debug[sym] = {"cols": list(df.columns), "saved": int(saved_now)}
+            except Exception as e:
+                failed.append(f"{sym}: save_fail {e}")
+
+    return jsonify({
+        "status": "success",
+        "period": period,
+        "limit": limit,
+        "batch": batch,
+        "rows_saved": total_saved,
+        "failed_count": len(failed),
+        "failed": failed[:50],   # 太長會爆，先回前 50 個
+        "elapsed": round(time.time() - t0, 2)
+    })
