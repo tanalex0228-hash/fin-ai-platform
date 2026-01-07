@@ -55,18 +55,27 @@ def ensure_sqlite_dir(db_path: str) -> None:
 # ---------------------------------------
 # 📌 從資料庫讀取單一股票資料
 # ---------------------------------------
+# app/api/routes.py
+from urllib.parse import urlparse, unquote
+
+def _sqlite_path_from_uri(uri: str) -> str:
+    # uri like: sqlite:////tmp/app.db
+    if not uri.startswith("sqlite:"):
+        raise ValueError(f"Not a sqlite uri: {uri}")
+    p = urlparse(uri)
+    return unquote(p.path)  # '/tmp/app.db'
+
 def load_price_df(symbol: str):
-    db_path = get_sqlite_db_path()
-    ensure_sqlite_dir(db_path)
+    uri = current_app.config["SQLALCHEMY_DATABASE_URI"]
+    db_path = _sqlite_path_from_uri(uri)
 
     conn = sqlite3.connect(db_path)
 
     df = pd.read_sql_query(
         "SELECT date, open, high, low, close, volume FROM stock_prices WHERE symbol=? ORDER BY date ASC",
         conn,
-        params=(symbol,)
+        params=(symbol.strip().upper(),)
     )
-
     conn.close()
 
     if df.empty:
@@ -75,6 +84,7 @@ def load_price_df(symbol: str):
     df["date"] = pd.to_datetime(df["date"])
     df.set_index("date", inplace=True)
     return df
+
 
 
 
@@ -228,22 +238,69 @@ def fetch_prices():
     failed = []
 
     for sym, df in price_dict.items():
-        if df.empty:
+        if df is None or df.empty:
             failed.append(sym)
             continue
 
+        # 1) MultiIndex 處理（yfinance 常見）
         if isinstance(df.columns, pd.MultiIndex):
+            # 盡量把欄位壓成單層
             try:
-                df = df.xs(sym, level=1, axis=1)
-            except:
+                # 常見：欄位長得像 ('Open','2330.TW') 或 (something, sym)
+                # 先嘗試抓 sym 那層
+                df_try = None
+                try:
+                    df_try = df.xs(sym, level=1, axis=1)
+                except:
+                    pass
+
+                if df_try is not None and not df_try.empty:
+                    df = df_try
+                else:
+                    # 不行就把 multiindex 直接 join 成字串
+                    df.columns = [" ".join([str(x) for x in col if x is not None]).strip() for col in df.columns]
+            except Exception as e:
+                print("❌ MultiIndex normalize failed:", sym, e)
                 failed.append(sym)
                 continue
 
-        df.columns = [c.strip() for c in df.columns]
-        try:
-            total_saved += etl.save_price_df_to_db(sym, df)
-        except:
+        # 2) 欄位名稱清理
+        df = df.copy()
+        df.columns = [str(c).strip() for c in df.columns]
+
+        # 3) 欄位映射：把各種可能名稱統一成 Open/High/Low/Close/Volume
+        rename_map = {
+            "open": "Open",
+            "high": "High",
+            "low": "Low",
+            "close": "Close",
+            "volume": "Volume",
+            "adj close": "Adj Close",
+            "adj_close": "Adj Close",
+            "Adj Close": "Adj Close",
+        }
+        df.rename(columns={c: rename_map.get(c.lower(), c) for c in df.columns}, inplace=True)
+
+        # 4) 有些資料會把日期放在欄位而不是 index，補救一下
+        if "Date" in df.columns:
+            df["Date"] = pd.to_datetime(df["Date"])
+            df.set_index("Date", inplace=True)
+
+        # 5) 最關鍵：確認 ETL 需要的欄位存在
+        need = {"Open", "High", "Low", "Close", "Volume"}
+        if not need.issubset(set(df.columns)):
+            print("❌ Missing OHLCV columns:", sym, "got=", list(df.columns))
             failed.append(sym)
+            continue
+
+        try:
+            saved_now = etl.save_price_df_to_db(sym.strip().upper(), df)
+            total_saved += saved_now
+            print("✅ saved:", sym, saved_now)
+        except Exception as e:
+            print("❌ save failed:", sym, e)
+            failed.append(sym)
+
 
     return jsonify({
         "status": "success",
