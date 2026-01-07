@@ -1,4 +1,19 @@
 <!-- 側邊欄 -->
+
+{# ===== 取得目前標的 current_symbol ===== #}
+{% set current_symbol = request.args.get('symbol') %}
+
+{# 如果不是 query 形式，而是在 /stock/<symbol> #}
+{% if not current_symbol and request.path.startswith('/stock/') %}
+  {% set current_symbol = request.path.split('/stock/')[1] %}
+{% endif %}
+
+{# 最後給預設 #}
+{% if not current_symbol %}
+  {% set current_symbol = '2330.TW' %}
+{% endif %}
+
+
 <div id="sidebar" class="sidebar">
     <h3 class="title">技術圖表</h3>
 
@@ -12,14 +27,25 @@
     <hr>
 
     <h3 class="title">選股分析</h3>
-    <a href="/screener" class="item">A2 選股器</a>
+    <!-- ⭐ 會自動帶 ?symbol=xxx -->
+    <a href="/screener{% if current_symbol %}?symbol={{ current_symbol }}{% endif %}" class="item">
+     A2 選股器
+    </a>
+
+    <a href="/monte_carlo{% if current_symbol %}?symbol={{ current_symbol }}{% endif %}" class="item">
+         Monte Carlo 回撤
+    </a>
+    <a href="/chart/all?symbol={{ current_symbol }}" class="item">📊 綜合圖表（All）</a>
+
+
+
 
     <hr>
 
     <h3 class="title">資料庫</h3>
     <a href="/stocks" class="item">股票列表</a>
 
-    <!-- ⭐⭐⭐ 新增：全站更新資料按鈕（放這裡） ⭐⭐⭐ -->
+    <!-- ⭐⭐⭐ 全站更新資料按鈕 ⭐⭐⭐ -->
     <button id="global-update-btn" onclick="updateToday()" style="
         padding: 8px 10px;
         background-color: #10b981;
@@ -35,8 +61,8 @@
     </button>
 
     <p id="global-update-result" style="color:#d1d5db; font-size: 13px; margin-top: 4px;"></p>
-    <!-- ⭐⭐⭐ 到此為止（插入區塊結束） ⭐⭐⭐ -->
 
+    <hr>
 
     <h3 class="title">自訂面板</h3>
     <a href="/panel" class="item">我的面板</a>
@@ -46,16 +72,11 @@
 <!-- 電腦版：收合按鈕 -->
 <button id="collapse-btn" class="collapse-btn">«</button>
 
-<!-- 手機版：漢堡按鈕 -->
+<!-- 手機版：漢堡按鈕（只保留這一顆） -->
 <button id="menu-btn" class="menu-btn">☰</button>
 
-
-
 <style>
-/* Sidebar 左側固定 */
-/* -------------------------------------------------------
-   Sidebar 基本設定
-------------------------------------------------------- */
+/* Sidebar 基本設定 */
 .sidebar {
     width: 200px;
     height: 100vh;
@@ -93,9 +114,7 @@
     color: white !important;
 }
 
-/* -------------------------------------------------------
-   Sidebar 收合狀態
-------------------------------------------------------- */
+/* 收合狀態 */
 .sidebar.collapsed {
     width: 60px;
 }
@@ -106,9 +125,7 @@
     pointer-events: none;
 }
 
-/* -------------------------------------------------------
-   主內容區塊
-------------------------------------------------------- */
+/* 主內容 */
 .content-with-sidebar {
     margin-left: 220px;
     padding: 20px;
@@ -119,9 +136,7 @@
     margin-left: 80px;
 }
 
-/* -------------------------------------------------------
-   PC版 收合按鈕
-------------------------------------------------------- */
+/* PC 收合按鈕 */
 .collapse-btn {
     position: fixed;
     top: 15px;
@@ -140,9 +155,7 @@
     left: 70px;
 }
 
-/* -------------------------------------------------------
-   手機版 RWD
-------------------------------------------------------- */
+/* 手機版 */
 @media (max-width: 768px) {
     .sidebar {
         position: absolute;
@@ -156,9 +169,13 @@
     .collapse-btn {
         display: none;
     }
+
+    .menu-btn {
+        display: block;
+    }
 }
 
-/* 手機漢堡按鈕 */
+/* 漢堡按鈕 */
 .menu-btn {
     display: none;
     position: fixed;
@@ -172,33 +189,9 @@
     border-radius: 5px;
     cursor: pointer;
 }
-
-@media (max-width: 768px) {
-    .menu-btn {
-        display: block;
-    }
-}
-
 </style>
 
-<!-- 漢堡選單（手機用） -->
-<button id="menu-btn" style="
-    display:none;
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    z-index: 999;
-    background: #2563eb;
-    color: white;
-    border: none;
-    padding: 10px 14px;
-    border-radius: 5px;
-">
-    ☰
-</button>
-
 <script>
-
 // ===== 桌機：收合側邊欄 =====
 document.getElementById("collapse-btn").onclick = function () {
     const sidebar = document.getElementById("sidebar");
@@ -206,10 +199,9 @@ document.getElementById("collapse-btn").onclick = function () {
     const btn = document.getElementById("collapse-btn");
 
     sidebar.classList.toggle("collapsed");
-    content.classList.toggle("collapsed");
+    if (content) content.classList.toggle("collapsed");
     btn.classList.toggle("collapsed");
 
-    // 修改箭頭方向
     btn.innerHTML = sidebar.classList.contains("collapsed") ? "»" : "«";
 };
 
@@ -218,7 +210,7 @@ document.getElementById("menu-btn").onclick = function () {
     document.getElementById("sidebar").classList.toggle("show");
 };
 
-// ===== Active 自動高亮 =====
+// ===== Active 自動高亮（不看 query，只看 path）=====
 const links = document.querySelectorAll(".sidebar .item");
 const path = window.location.pathname;
 
@@ -228,4 +220,3 @@ links.forEach(a => {
     }
 });
 </script>
-

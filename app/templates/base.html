@@ -51,6 +51,66 @@
         btn.innerText = "🔄 更新今日資料";
     }
     </script>
+    <script>
+      /** =========================
+       * Global Active Symbol Store
+       * ========================= */
+      const ACTIVE_SYMBOL_KEY = "active_symbol";
+
+      function normalizeSymbol(sym) {
+        if (!sym) return "";
+        return sym.trim().toUpperCase();
+      }
+
+      function setActiveSymbol(sym) {
+        sym = normalizeSymbol(sym);
+        if (!sym) return;
+        localStorage.setItem(ACTIVE_SYMBOL_KEY, sym);
+      }
+
+      function getActiveSymbol() {
+        return localStorage.getItem(ACTIVE_SYMBOL_KEY) || "";
+      }
+
+      // 1) 若網址有 ?symbol=xxx -> 寫入 active symbol
+      (function initFromQuery() {
+        try {
+          const sp = new URLSearchParams(window.location.search);
+          const sym = sp.get("symbol");
+          if (sym) setActiveSymbol(sym);
+        } catch (e) {}
+      })();
+
+      // 2) 若頁面有 data-active-symbol（例如 stock detail） -> 寫入 active symbol
+      (function initFromDataset() {
+        const el = document.querySelector("[data-active-symbol]");
+        if (el && el.dataset.activeSymbol) setActiveSymbol(el.dataset.activeSymbol);
+      })();
+
+      // 3) 自動把 active symbol 帶到特定連結（標記 data-carry-symbol）
+      (function applySymbolToLinks() {
+        const sym = getActiveSymbol();
+        if (!sym) return;
+
+        document.querySelectorAll("a[data-carry-symbol]").forEach(a => {
+          const href = a.getAttribute("href");
+          if (!href) return;
+
+          // 外部連結或錨點不處理
+          if (href.startsWith("http") || href.startsWith("#")) return;
+
+          try {
+            const url = new URL(href, window.location.origin);
+            // 有些是 /stock/<symbol> 這種不用 query 的也不處理
+            if (url.pathname.startsWith("/stock/")) return;
+
+            url.searchParams.set("symbol", sym);
+            a.setAttribute("href", url.pathname + url.search);
+          } catch (e) {}
+        });
+      })();
+    </script>
+
     <!-- ⭐⭐ JS 到這裡結束 ⭐⭐ -->
 
 </body>

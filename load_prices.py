@@ -11,4 +11,4 @@ if __name__ == "__main__":
     # 這裡可以自己調整 start_date / limit
     # limit=100 → 一次只更新 100 檔，安全不會打爆 600 次/小時
 # 🔥 再抓 1990~2018
-    update_all_prices(start_date="1990-01-01", limit=500)
+    update_all_prices(start_date="2018-01-01", limit=None , sleep_sec=0.3)

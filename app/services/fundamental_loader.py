@@ -11,13 +11,13 @@ from app.services.data_fundamental_service import (
 
 # 舊名稱相容
 def fetch_and_save(stock_id: str):
-    """
+    """ 
     給 update_fundamental_full.py 使用：
     同步版本的 fetch_and_save_fundamental
     """
     # 確保 stock_id 沒有 .TW / .TWO
     sid = stock_id.replace(".TW", "").replace(".TWO", "")
-
+    
     try:
         asyncio.run(fetch_and_save_fundamental(sid))
     except RuntimeError as e:

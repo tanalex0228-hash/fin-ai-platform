@@ -1,0 +1,1252 @@
+===== Sun Jan  4 01:43:01 CST 2026 START daily price update =====
+/Users/apple/Desktop/fin_ai_platform/venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+✅ routes.py 已成功載入
+🔥 Flask 實際使用的 DB = /Users/apple/Desktop/fin_ai_platform/instance/app.db
+🔥 All Routes Loaded:
+Map([<Rule '/static/<filename>' (HEAD, OPTIONS, GET) -> static>,
+ <Rule '/auth/register' (HEAD, OPTIONS, POST, GET) -> auth.register>,
+ <Rule '/auth/login' (HEAD, OPTIONS, POST, GET) -> auth.login>,
+ <Rule '/auth/logout' (HEAD, OPTIONS, GET) -> auth.logout>,
+ <Rule '/' (HEAD, OPTIONS, GET) -> main.dashboard>,
+ <Rule '/backtest' (HEAD, OPTIONS, GET) -> main.backtest_page>,
+ <Rule '/screener' (HEAD, OPTIONS, GET) -> main.page_screener>,
+ <Rule '/chart' (HEAD, OPTIONS, GET) -> main.chart_page>,
+ <Rule '/chart/macd' (HEAD, OPTIONS, GET) -> main.chart_macd_page>,
+ <Rule '/chart/rsi' (HEAD, OPTIONS, GET) -> main.chart_rsi_page>,
+ <Rule '/chart/kd' (HEAD, OPTIONS, GET) -> main.chart_kd_page>,
+ <Rule '/chart/bbands' (HEAD, OPTIONS, GET) -> main.chart_bbands_page>,
+ <Rule '/chart/volume' (HEAD, OPTIONS, GET) -> main.chart_volume_page>,
+ <Rule '/chart/all' (HEAD, OPTIONS, GET) -> main.chart_all_page>,
+ <Rule '/stock/<symbol>' (HEAD, OPTIONS, GET) -> main.stock_detail>,
+ <Rule '/stocks' (HEAD, OPTIONS, GET) -> main.page_stocks>,
+ <Rule '/api/stock/summary' (HEAD, OPTIONS, GET) -> api.stock_summary>,
+ <Rule '/api/backtest' (OPTIONS, POST) -> api.api_backtest>,
+ <Rule '/api/fetch_prices' (OPTIONS, POST) -> api.fetch_prices>,
+ <Rule '/api/screener' (OPTIONS, POST) -> api.api_screener>,
+ <Rule '/api/get_prices' (HEAD, OPTIONS, GET) -> api.get_prices>,
+ <Rule '/api/get_prices' (HEAD, OPTIONS, GET) -> api.get_prices>,
+ <Rule '/api/ma_strategy' (HEAD, OPTIONS, GET) -> api.ma_strategy>,
+ <Rule '/api/backtest/history' (HEAD, OPTIONS, GET) -> api.backtest_history>,
+ <Rule '/api/backtest/get/<bt_id>' (HEAD, OPTIONS, GET) -> api.api_get_backtest>,
+ <Rule '/api/score_a2' (OPTIONS, POST) -> api.score_a2>,
+ <Rule '/api/stocks_in_db' (HEAD, OPTIONS, GET) -> api.get_stocks_in_db>,
+ <Rule '/api/update_today' (OPTIONS, POST) -> api.update_today>])
+🚀 2330.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2330.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2330.TW
+⚠️ 2330.TW 無任何資料，略過
+🚀 2317.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2317.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2317.TW
+⚠️ 2317.TW 無任何資料，略過
+🚀 2454.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2454.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2454.TW
+⚠️ 2454.TW 無任何資料，略過
+🚀 6505.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 6505.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 6505.TW
+⚠️ 6505.TW 無任何資料，略過
+🚀 2412.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2412.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2412.TW
+⚠️ 2412.TW 無任何資料，略過
+🚀 2303.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2303.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2303.TW
+⚠️ 2303.TW 無任何資料，略過
+🚀 1301.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1301.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 1301.TW
+⚠️ 1301.TW 無任何資料，略過
+🚀 1303.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1303.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 1303.TW
+⚠️ 1303.TW 無任何資料，略過
+🚀 3711.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3711.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 3711.TW
+⚠️ 3711.TW 無任何資料，略過
+🚀 2881.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2881.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2881.TW
+⚠️ 2881.TW 無任何資料，略過
+🚀 2882.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2882.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2882.TW
+⚠️ 2882.TW 無任何資料，略過
+🚀 2891.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2891.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2891.TW
+⚠️ 2891.TW 無任何資料，略過
+🚀 2886.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2886.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2886.TW
+⚠️ 2886.TW 無任何資料，略過
+🚀 2382.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2382.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2382.TW
+⚠️ 2382.TW 無任何資料，略過
+🚀 2884.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2884.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2884.TW
+⚠️ 2884.TW 無任何資料，略過
+🚀 2885.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2885.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2885.TW
+⚠️ 2885.TW 無任何資料，略過
+🚀 2603.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2603.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2603.TW
+⚠️ 2603.TW 無任何資料，略過
+🚀 2308.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2308.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2308.TW
+⚠️ 2308.TW 無任何資料，略過
+🚀 2002.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2002.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2002.TW
+⚠️ 2002.TW 無任何資料，略過
+🚀 6768.TWO 增量更新起點: 2018-01-01
+📌 使用 FinMind 更新 6768.TWO 股價，自 2018-01-01 起...
+⚠️ FinMind 沒有回傳股價資料: 6768.TWO
+⚠️ 6768.TWO 無任何資料，略過
+🚀 2609.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2609.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2609.TW
+⚠️ 2609.TW 無任何資料，略過
+🚀 5871.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 5871.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 5871.TW
+⚠️ 5871.TW 無任何資料，略過
+🚀 2801.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2801.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2801.TW
+⚠️ 2801.TW 無任何資料，略過
+🚀 2357.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2357.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2357.TW
+⚠️ 2357.TW 無任何資料，略過
+🚀 1590.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1590.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 1590.TW
+⚠️ 1590.TW 無任何資料，略過
+🚀 1326.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1326.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 1326.TW
+⚠️ 1326.TW 無任何資料，略過
+🚀 8046.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 8046.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 8046.TW
+⚠️ 8046.TW 無任何資料，略過
+🚀 2615.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2615.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2615.TW
+⚠️ 2615.TW 無任何資料，略過
+🚀 2880.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2880.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2880.TW
+⚠️ 2880.TW 無任何資料，略過
+🚀 2605.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2605.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2605.TW
+⚠️ 2605.TW 無任何資料，略過
+🚀 1101.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1101.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 1101.TW
+⚠️ 1101.TW 無任何資料，略過
+🚀 1102.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1102.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 1102.TW
+⚠️ 1102.TW 無任何資料，略過
+🚀 1216.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1216.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 1216.TW
+⚠️ 1216.TW 無任何資料，略過
+🚀 3008.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3008.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 3008.TW
+⚠️ 3008.TW 無任何資料，略過
+🚀 3481.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3481.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 3481.TW
+⚠️ 3481.TW 無任何資料，略過
+🚀 4904.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 4904.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 4904.TW
+⚠️ 4904.TW 無任何資料，略過
+🚀 2409.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2409.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2409.TW
+⚠️ 2409.TW 無任何資料，略過
+🚀 2883.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2883.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2883.TW
+⚠️ 2883.TW 無任何資料，略過
+🚀 2356.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2356.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2356.TW
+⚠️ 2356.TW 無任何資料，略過
+🚀 2327.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2327.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2327.TW
+⚠️ 2327.TW 無任何資料，略過
+🚀 6669.TWO 增量更新起點: 2018-01-01
+📌 使用 FinMind 更新 6669.TWO 股價，自 2018-01-01 起...
+⚠️ FinMind 沒有回傳股價資料: 6669.TWO
+⚠️ 6669.TWO 無任何資料，略過
+🚀 2379.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2379.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2379.TW
+⚠️ 2379.TW 無任何資料，略過
+🚀 2385.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2385.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2385.TW
+⚠️ 2385.TW 無任何資料，略過
+🚀 9904.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 9904.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 9904.TW
+⚠️ 9904.TW 無任何資料，略過
+🚀 2601.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2601.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2601.TW
+⚠️ 2601.TW 無任何資料，略過
+🚀 2207.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2207.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2207.TW
+⚠️ 2207.TW 無任何資料，略過
+🚀 2105.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2105.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2105.TW
+⚠️ 2105.TW 無任何資料，略過
+🚀 3034.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3034.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 3034.TW
+⚠️ 3034.TW 無任何資料，略過
+🚀 2395.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2395.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2395.TW
+⚠️ 2395.TW 無任何資料，略過
+🚀 4938.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 4938.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 4938.TW
+⚠️ 4938.TW 無任何資料，略過
+🚀 5876.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 5876.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 5876.TW
+⚠️ 5876.TW 無任何資料，略過
+🚀 3037.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3037.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 3037.TW
+⚠️ 3037.TW 無任何資料，略過
+🚀 2637.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2637.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2637.TW
+⚠️ 2637.TW 無任何資料，略過
+🚀 2353.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2353.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2353.TW
+⚠️ 2353.TW 無任何資料，略過
+🚀 2301.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2301.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2301.TW
+⚠️ 2301.TW 無任何資料，略過
+🚀 6239.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 6239.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 6239.TW
+⚠️ 6239.TW 無任何資料，略過
+🚀 2887.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2887.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2887.TW
+⚠️ 2887.TW 無任何資料，略過
+🚀 2888.TW 增量更新起點: 2025-07-12
+📌 使用 FinMind 更新 2888.TW 股價，自 2025-07-12 起...
+⚠️ FinMind 沒有回傳股價資料: 2888.TW
+⚠️ 2888.TW 無任何資料，略過
+🚀 2889.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2889.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2889.TW
+⚠️ 2889.TW 無任何資料，略過
+🚀 2892.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2892.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2892.TW
+⚠️ 2892.TW 無任何資料，略過
+🚀 8069.TWO 增量更新起點: 2018-01-01
+📌 使用 FinMind 更新 8069.TWO 股價，自 2018-01-01 起...
+⚠️ FinMind 沒有回傳股價資料: 8069.TWO
+⚠️ 8069.TWO 無任何資料，略過
+🚀 1909.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1909.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 1909.TW
+⚠️ 1909.TW 無任何資料，略過
+🚀 4930.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 4930.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 4930.TW
+⚠️ 4930.TW 無任何資料，略過
+🚀 3045.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3045.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 3045.TW
+⚠️ 3045.TW 無任何資料，略過
+🚀 3035.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3035.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 3035.TW
+⚠️ 3035.TW 無任何資料，略過
+🚀 2449.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2449.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2449.TW
+⚠️ 2449.TW 無任何資料，略過
+🚀 4934.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 4934.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 4934.TW
+⚠️ 4934.TW 無任何資料，略過
+🚀 3264.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3264.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 3264.TW
+⚠️ 3264.TW 無任何資料，略過
+🚀 2408.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2408.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2408.TW
+⚠️ 2408.TW 無任何資料，略過
+🚀 2498.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2498.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2498.TW
+⚠️ 2498.TW 無任何資料，略過
+🚀 1476.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1476.TW 股價，自 2026-01-03 起...
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/fin_ai_platform/load_prices.py", line 14, in <module>
+    update_all_prices(start_date="2018-01-01", limit=500,sleep_sec=0.3)
+  File "/Users/apple/Desktop/fin_ai_platform/app/services/db_loader.py", line 72, in update_all_prices
+    update_price_history(sym, start_date=next_start)
+  File "/Users/apple/Desktop/fin_ai_platform/app/services/data_price_service.py", line 134, in update_price_history
+    df = fetch_price_from_finmind(symbol, start_date=start_date)
+  File "/Users/apple/Desktop/fin_ai_platform/app/services/data_price_service.py", line 24, in fetch_price_from_finmind
+    raw = finmind_get(
+  File "/Users/apple/Desktop/fin_ai_platform/app/services/finmind_client.py", line 27, in finmind_get
+    res = requests.get(FINMIND_API_URL, params=params, timeout=20)
+  File "/Users/apple/Desktop/fin_ai_platform/venv/lib/python3.9/site-packages/requests/api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+  File "/Users/apple/Desktop/fin_ai_platform/venv/lib/python3.9/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "/Users/apple/Desktop/fin_ai_platform/venv/lib/python3.9/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/Users/apple/Desktop/fin_ai_platform/venv/lib/python3.9/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "/Users/apple/Desktop/fin_ai_platform/venv/lib/python3.9/site-packages/requests/adapters.py", line 486, in send
+    resp = conn.urlopen(
+  File "/Users/apple/Desktop/fin_ai_platform/venv/lib/python3.9/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+  File "/Users/apple/Desktop/fin_ai_platform/venv/lib/python3.9/site-packages/urllib3/connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+  File "/Users/apple/Desktop/fin_ai_platform/venv/lib/python3.9/site-packages/urllib3/connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+  File "/Users/apple/Desktop/fin_ai_platform/venv/lib/python3.9/site-packages/urllib3/connection.py", line 753, in connect
+    self.sock = sock = self._new_conn()
+  File "/Users/apple/Desktop/fin_ai_platform/venv/lib/python3.9/site-packages/urllib3/connection.py", line 198, in _new_conn
+    sock = connection.create_connection(
+  File "/Users/apple/Desktop/fin_ai_platform/venv/lib/python3.9/site-packages/urllib3/util/connection.py", line 73, in create_connection
+    sock.connect(sa)
+KeyboardInterrupt
+===== Sun Jan  4 01:46:21 CST 2026 START daily price update =====
+/Users/apple/Desktop/fin_ai_platform/venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+✅ routes.py 已成功載入
+🔥 Flask 實際使用的 DB = /Users/apple/Desktop/fin_ai_platform/instance/app.db
+🔥 All Routes Loaded:
+Map([<Rule '/static/<filename>' (GET, OPTIONS, HEAD) -> static>,
+ <Rule '/auth/register' (POST, GET, OPTIONS, HEAD) -> auth.register>,
+ <Rule '/auth/login' (POST, GET, OPTIONS, HEAD) -> auth.login>,
+ <Rule '/auth/logout' (GET, OPTIONS, HEAD) -> auth.logout>,
+ <Rule '/' (GET, OPTIONS, HEAD) -> main.dashboard>,
+ <Rule '/backtest' (GET, OPTIONS, HEAD) -> main.backtest_page>,
+ <Rule '/screener' (GET, OPTIONS, HEAD) -> main.page_screener>,
+ <Rule '/chart' (GET, OPTIONS, HEAD) -> main.chart_page>,
+ <Rule '/chart/macd' (GET, OPTIONS, HEAD) -> main.chart_macd_page>,
+ <Rule '/chart/rsi' (GET, OPTIONS, HEAD) -> main.chart_rsi_page>,
+ <Rule '/chart/kd' (GET, OPTIONS, HEAD) -> main.chart_kd_page>,
+ <Rule '/chart/bbands' (GET, OPTIONS, HEAD) -> main.chart_bbands_page>,
+ <Rule '/chart/volume' (GET, OPTIONS, HEAD) -> main.chart_volume_page>,
+ <Rule '/chart/all' (GET, OPTIONS, HEAD) -> main.chart_all_page>,
+ <Rule '/stock/<symbol>' (GET, OPTIONS, HEAD) -> main.stock_detail>,
+ <Rule '/stocks' (GET, OPTIONS, HEAD) -> main.page_stocks>,
+ <Rule '/api/stock/summary' (GET, OPTIONS, HEAD) -> api.stock_summary>,
+ <Rule '/api/backtest' (POST, OPTIONS) -> api.api_backtest>,
+ <Rule '/api/fetch_prices' (POST, OPTIONS) -> api.fetch_prices>,
+ <Rule '/api/screener' (POST, OPTIONS) -> api.api_screener>,
+ <Rule '/api/get_prices' (GET, OPTIONS, HEAD) -> api.get_prices>,
+ <Rule '/api/get_prices' (GET, OPTIONS, HEAD) -> api.get_prices>,
+ <Rule '/api/ma_strategy' (GET, OPTIONS, HEAD) -> api.ma_strategy>,
+ <Rule '/api/backtest/history' (GET, OPTIONS, HEAD) -> api.backtest_history>,
+ <Rule '/api/backtest/get/<bt_id>' (GET, OPTIONS, HEAD) -> api.api_get_backtest>,
+ <Rule '/api/score_a2' (POST, OPTIONS) -> api.score_a2>,
+ <Rule '/api/stocks_in_db' (GET, OPTIONS, HEAD) -> api.get_stocks_in_db>,
+ <Rule '/api/update_today' (POST, OPTIONS) -> api.update_today>])
+🚀 2330.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2330.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2330.TW
+⚠️ 2330.TW 無任何資料，略過
+🚀 2317.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2317.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2317.TW
+⚠️ 2317.TW 無任何資料，略過
+🚀 2454.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2454.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2454.TW
+⚠️ 2454.TW 無任何資料，略過
+🚀 6505.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 6505.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 6505.TW
+⚠️ 6505.TW 無任何資料，略過
+🚀 2412.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2412.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2412.TW
+⚠️ 2412.TW 無任何資料，略過
+🚀 2303.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2303.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2303.TW
+⚠️ 2303.TW 無任何資料，略過
+🚀 1301.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1301.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 1301.TW
+⚠️ 1301.TW 無任何資料，略過
+🚀 1303.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1303.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 1303.TW
+⚠️ 1303.TW 無任何資料，略過
+🚀 3711.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3711.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 3711.TW
+⚠️ 3711.TW 無任何資料，略過
+🚀 2881.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2881.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2881.TW
+⚠️ 2881.TW 無任何資料，略過
+🚀 2882.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2882.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2882.TW
+⚠️ 2882.TW 無任何資料，略過
+🚀 2891.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2891.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2891.TW
+⚠️ 2891.TW 無任何資料，略過
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/fin_ai_platform/load_prices.py", line 14, in <module>
+    update_all_prices(start_date="2018-01-01", limit=500,sleep_sec=0.3)
+  File "/Users/apple/Desktop/fin_ai_platform/app/services/db_loader.py", line 73, in update_all_prices
+    time.sleep(sleep_sec)
+KeyboardInterrupt
+===== Sun Jan  4 01:46:44 CST 2026 START daily price update =====
+/Users/apple/Desktop/fin_ai_platform/venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+✅ routes.py 已成功載入
+🔥 Flask 實際使用的 DB = /Users/apple/Desktop/fin_ai_platform/instance/app.db
+🔥 All Routes Loaded:
+Map([<Rule '/static/<filename>' (OPTIONS, GET, HEAD) -> static>,
+ <Rule '/auth/register' (OPTIONS, HEAD, GET, POST) -> auth.register>,
+ <Rule '/auth/login' (OPTIONS, HEAD, GET, POST) -> auth.login>,
+ <Rule '/auth/logout' (OPTIONS, GET, HEAD) -> auth.logout>,
+ <Rule '/' (OPTIONS, GET, HEAD) -> main.dashboard>,
+ <Rule '/backtest' (OPTIONS, GET, HEAD) -> main.backtest_page>,
+ <Rule '/screener' (OPTIONS, GET, HEAD) -> main.page_screener>,
+ <Rule '/chart' (OPTIONS, GET, HEAD) -> main.chart_page>,
+ <Rule '/chart/macd' (OPTIONS, GET, HEAD) -> main.chart_macd_page>,
+ <Rule '/chart/rsi' (OPTIONS, GET, HEAD) -> main.chart_rsi_page>,
+ <Rule '/chart/kd' (OPTIONS, GET, HEAD) -> main.chart_kd_page>,
+ <Rule '/chart/bbands' (OPTIONS, GET, HEAD) -> main.chart_bbands_page>,
+ <Rule '/chart/volume' (OPTIONS, GET, HEAD) -> main.chart_volume_page>,
+ <Rule '/chart/all' (OPTIONS, GET, HEAD) -> main.chart_all_page>,
+ <Rule '/stock/<symbol>' (OPTIONS, GET, HEAD) -> main.stock_detail>,
+ <Rule '/stocks' (OPTIONS, GET, HEAD) -> main.page_stocks>,
+ <Rule '/api/stock/summary' (OPTIONS, GET, HEAD) -> api.stock_summary>,
+ <Rule '/api/backtest' (OPTIONS, POST) -> api.api_backtest>,
+ <Rule '/api/fetch_prices' (OPTIONS, POST) -> api.fetch_prices>,
+ <Rule '/api/screener' (OPTIONS, POST) -> api.api_screener>,
+ <Rule '/api/get_prices' (OPTIONS, GET, HEAD) -> api.get_prices>,
+ <Rule '/api/get_prices' (OPTIONS, GET, HEAD) -> api.get_prices>,
+ <Rule '/api/ma_strategy' (OPTIONS, GET, HEAD) -> api.ma_strategy>,
+ <Rule '/api/backtest/history' (OPTIONS, GET, HEAD) -> api.backtest_history>,
+ <Rule '/api/backtest/get/<bt_id>' (OPTIONS, GET, HEAD) -> api.api_get_backtest>,
+ <Rule '/api/score_a2' (OPTIONS, POST) -> api.score_a2>,
+ <Rule '/api/stocks_in_db' (OPTIONS, GET, HEAD) -> api.get_stocks_in_db>,
+ <Rule '/api/update_today' (OPTIONS, POST) -> api.update_today>])
+🚀 2330.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2330.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2330.TW
+⚠️ 2330.TW 無任何資料，略過
+🚀 2317.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2317.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2317.TW
+⚠️ 2317.TW 無任何資料，略過
+🚀 2454.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2454.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2454.TW
+⚠️ 2454.TW 無任何資料，略過
+🚀 6505.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 6505.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 6505.TW
+⚠️ 6505.TW 無任何資料，略過
+🚀 2412.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2412.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2412.TW
+⚠️ 2412.TW 無任何資料，略過
+🚀 2303.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2303.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2303.TW
+⚠️ 2303.TW 無任何資料，略過
+🚀 1301.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1301.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 1301.TW
+⚠️ 1301.TW 無任何資料，略過
+🚀 1303.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1303.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 1303.TW
+⚠️ 1303.TW 無任何資料，略過
+🚀 3711.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3711.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 3711.TW
+⚠️ 3711.TW 無任何資料，略過
+🚀 2881.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2881.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2881.TW
+⚠️ 2881.TW 無任何資料，略過
+🚀 2882.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2882.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2882.TW
+⚠️ 2882.TW 無任何資料，略過
+🚀 2891.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2891.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2891.TW
+⚠️ 2891.TW 無任何資料，略過
+🚀 2886.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2886.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2886.TW
+⚠️ 2886.TW 無任何資料，略過
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/fin_ai_platform/load_prices.py", line 14, in <module>
+    update_all_prices(start_date="2018-01-01", limit=500,sleep_sec=0.3)
+  File "/Users/apple/Desktop/fin_ai_platform/app/services/db_loader.py", line 73, in update_all_prices
+    time.sleep(sleep_sec)
+KeyboardInterrupt
+===== Sun Jan  4 01:50:27 CST 2026 START daily price update =====
+/Users/apple/Desktop/fin_ai_platform/venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+✅ routes.py 已成功載入
+🔥 Flask 實際使用的 DB = /Users/apple/Desktop/fin_ai_platform/instance/app.db
+🔥 All Routes Loaded:
+Map([<Rule '/static/<filename>' (HEAD, OPTIONS, GET) -> static>,
+ <Rule '/auth/register' (HEAD, POST, OPTIONS, GET) -> auth.register>,
+ <Rule '/auth/login' (HEAD, POST, OPTIONS, GET) -> auth.login>,
+ <Rule '/auth/logout' (HEAD, OPTIONS, GET) -> auth.logout>,
+ <Rule '/' (HEAD, OPTIONS, GET) -> main.dashboard>,
+ <Rule '/backtest' (HEAD, OPTIONS, GET) -> main.backtest_page>,
+ <Rule '/screener' (HEAD, OPTIONS, GET) -> main.page_screener>,
+ <Rule '/chart' (HEAD, OPTIONS, GET) -> main.chart_page>,
+ <Rule '/chart/macd' (HEAD, OPTIONS, GET) -> main.chart_macd_page>,
+ <Rule '/chart/rsi' (HEAD, OPTIONS, GET) -> main.chart_rsi_page>,
+ <Rule '/chart/kd' (HEAD, OPTIONS, GET) -> main.chart_kd_page>,
+ <Rule '/chart/bbands' (HEAD, OPTIONS, GET) -> main.chart_bbands_page>,
+ <Rule '/chart/volume' (HEAD, OPTIONS, GET) -> main.chart_volume_page>,
+ <Rule '/chart/all' (HEAD, OPTIONS, GET) -> main.chart_all_page>,
+ <Rule '/stock/<symbol>' (HEAD, OPTIONS, GET) -> main.stock_detail>,
+ <Rule '/stocks' (HEAD, OPTIONS, GET) -> main.page_stocks>,
+ <Rule '/api/stock/summary' (HEAD, OPTIONS, GET) -> api.stock_summary>,
+ <Rule '/api/backtest' (POST, OPTIONS) -> api.api_backtest>,
+ <Rule '/api/fetch_prices' (POST, OPTIONS) -> api.fetch_prices>,
+ <Rule '/api/screener' (POST, OPTIONS) -> api.api_screener>,
+ <Rule '/api/get_prices' (HEAD, OPTIONS, GET) -> api.get_prices>,
+ <Rule '/api/get_prices' (HEAD, OPTIONS, GET) -> api.get_prices>,
+ <Rule '/api/ma_strategy' (HEAD, OPTIONS, GET) -> api.ma_strategy>,
+ <Rule '/api/backtest/history' (HEAD, OPTIONS, GET) -> api.backtest_history>,
+ <Rule '/api/backtest/get/<bt_id>' (HEAD, OPTIONS, GET) -> api.api_get_backtest>,
+ <Rule '/api/score_a2' (POST, OPTIONS) -> api.score_a2>,
+ <Rule '/api/stocks_in_db' (HEAD, OPTIONS, GET) -> api.get_stocks_in_db>,
+ <Rule '/api/update_today' (POST, OPTIONS) -> api.update_today>])
+🚀 2330.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2330.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2330.TW
+⚠️ 2330.TW 無任何資料，略過
+🚀 2317.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2317.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2317.TW
+⚠️ 2317.TW 無任何資料，略過
+🚀 2454.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2454.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2454.TW
+⚠️ 2454.TW 無任何資料，略過
+🚀 6505.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 6505.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 6505.TW
+⚠️ 6505.TW 無任何資料，略過
+🚀 2412.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2412.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2412.TW
+⚠️ 2412.TW 無任何資料，略過
+🚀 2303.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2303.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2303.TW
+⚠️ 2303.TW 無任何資料，略過
+🚀 1301.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1301.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 1301.TW
+⚠️ 1301.TW 無任何資料，略過
+🚀 1303.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1303.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 1303.TW
+⚠️ 1303.TW 無任何資料，略過
+🚀 3711.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3711.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 3711.TW
+⚠️ 3711.TW 無任何資料，略過
+🚀 2881.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2881.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2881.TW
+⚠️ 2881.TW 無任何資料，略過
+🚀 2882.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2882.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2882.TW
+⚠️ 2882.TW 無任何資料，略過
+🚀 2891.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2891.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2891.TW
+⚠️ 2891.TW 無任何資料，略過
+🚀 2886.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2886.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2886.TW
+⚠️ 2886.TW 無任何資料，略過
+🚀 2382.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2382.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2382.TW
+⚠️ 2382.TW 無任何資料，略過
+🚀 2884.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2884.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2884.TW
+⚠️ 2884.TW 無任何資料，略過
+🚀 2885.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2885.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2885.TW
+⚠️ 2885.TW 無任何資料，略過
+🚀 2603.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2603.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2603.TW
+⚠️ 2603.TW 無任何資料，略過
+🚀 2308.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2308.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2308.TW
+⚠️ 2308.TW 無任何資料，略過
+🚀 2002.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2002.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2002.TW
+⚠️ 2002.TW 無任何資料，略過
+🚀 6768.TWO 增量更新起點: 2018-01-01
+📌 使用 FinMind 更新 6768.TWO 股價，自 2018-01-01 起...
+⚠️ FinMind 沒有回傳股價資料: 6768.TWO
+⚠️ 6768.TWO 無任何資料，略過
+🚀 2609.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2609.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2609.TW
+⚠️ 2609.TW 無任何資料，略過
+🚀 5871.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 5871.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 5871.TW
+⚠️ 5871.TW 無任何資料，略過
+🚀 2801.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2801.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2801.TW
+⚠️ 2801.TW 無任何資料，略過
+🚀 2357.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2357.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2357.TW
+⚠️ 2357.TW 無任何資料，略過
+🚀 1590.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1590.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 1590.TW
+⚠️ 1590.TW 無任何資料，略過
+🚀 1326.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1326.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 1326.TW
+⚠️ 1326.TW 無任何資料，略過
+🚀 8046.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 8046.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 8046.TW
+⚠️ 8046.TW 無任何資料，略過
+🚀 2615.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2615.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2615.TW
+⚠️ 2615.TW 無任何資料，略過
+🚀 2880.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2880.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2880.TW
+⚠️ 2880.TW 無任何資料，略過
+🚀 2605.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2605.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2605.TW
+⚠️ 2605.TW 無任何資料，略過
+🚀 1101.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1101.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 1101.TW
+⚠️ 1101.TW 無任何資料，略過
+🚀 1102.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1102.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 1102.TW
+⚠️ 1102.TW 無任何資料，略過
+🚀 1216.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1216.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 1216.TW
+⚠️ 1216.TW 無任何資料，略過
+🚀 3008.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3008.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 3008.TW
+⚠️ 3008.TW 無任何資料，略過
+🚀 3481.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3481.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 3481.TW
+⚠️ 3481.TW 無任何資料，略過
+🚀 4904.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 4904.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 4904.TW
+⚠️ 4904.TW 無任何資料，略過
+🚀 2409.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2409.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2409.TW
+⚠️ 2409.TW 無任何資料，略過
+🚀 2883.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2883.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2883.TW
+⚠️ 2883.TW 無任何資料，略過
+🚀 2356.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2356.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2356.TW
+⚠️ 2356.TW 無任何資料，略過
+🚀 2327.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2327.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2327.TW
+⚠️ 2327.TW 無任何資料，略過
+🚀 6669.TWO 增量更新起點: 2018-01-01
+📌 使用 FinMind 更新 6669.TWO 股價，自 2018-01-01 起...
+⚠️ FinMind 沒有回傳股價資料: 6669.TWO
+⚠️ 6669.TWO 無任何資料，略過
+🚀 2379.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2379.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2379.TW
+⚠️ 2379.TW 無任何資料，略過
+🚀 2385.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2385.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2385.TW
+⚠️ 2385.TW 無任何資料，略過
+🚀 9904.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 9904.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 9904.TW
+⚠️ 9904.TW 無任何資料，略過
+🚀 2601.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2601.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2601.TW
+⚠️ 2601.TW 無任何資料，略過
+🚀 2207.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2207.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2207.TW
+⚠️ 2207.TW 無任何資料，略過
+🚀 2105.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2105.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2105.TW
+⚠️ 2105.TW 無任何資料，略過
+🚀 3034.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3034.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 3034.TW
+⚠️ 3034.TW 無任何資料，略過
+🚀 2395.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2395.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2395.TW
+⚠️ 2395.TW 無任何資料，略過
+🚀 4938.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 4938.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 4938.TW
+⚠️ 4938.TW 無任何資料，略過
+🚀 5876.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 5876.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 5876.TW
+⚠️ 5876.TW 無任何資料，略過
+🚀 3037.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3037.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 3037.TW
+⚠️ 3037.TW 無任何資料，略過
+🚀 2637.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2637.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2637.TW
+⚠️ 2637.TW 無任何資料，略過
+🚀 2353.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2353.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2353.TW
+⚠️ 2353.TW 無任何資料，略過
+🚀 2301.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2301.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2301.TW
+⚠️ 2301.TW 無任何資料，略過
+🚀 6239.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 6239.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 6239.TW
+⚠️ 6239.TW 無任何資料，略過
+🚀 2887.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2887.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2887.TW
+⚠️ 2887.TW 無任何資料，略過
+🚀 2888.TW 增量更新起點: 2025-07-12
+📌 使用 FinMind 更新 2888.TW 股價，自 2025-07-12 起...
+⚠️ FinMind 沒有回傳股價資料: 2888.TW
+⚠️ 2888.TW 無任何資料，略過
+🚀 2889.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2889.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2889.TW
+⚠️ 2889.TW 無任何資料，略過
+🚀 2892.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2892.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2892.TW
+⚠️ 2892.TW 無任何資料，略過
+🚀 8069.TWO 增量更新起點: 2018-01-01
+📌 使用 FinMind 更新 8069.TWO 股價，自 2018-01-01 起...
+⚠️ FinMind 沒有回傳股價資料: 8069.TWO
+⚠️ 8069.TWO 無任何資料，略過
+🚀 1909.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1909.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 1909.TW
+⚠️ 1909.TW 無任何資料，略過
+🚀 4930.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 4930.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 4930.TW
+⚠️ 4930.TW 無任何資料，略過
+🚀 3045.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3045.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 3045.TW
+⚠️ 3045.TW 無任何資料，略過
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/fin_ai_platform/load_prices.py", line 14, in <module>
+    update_all_prices(start_date="2018-01-01", limit=500,sleep_sec=0.3)
+  File "/Users/apple/Desktop/fin_ai_platform/app/services/db_loader.py", line 78, in update_all_prices
+    time.sleep(sleep_sec)
+KeyboardInterrupt
+===== Sun Jan  4 01:53:38 CST 2026 START daily price update =====
+/Users/apple/Desktop/fin_ai_platform/venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+✅ routes.py 已成功載入
+🔥 Flask 實際使用的 DB = /Users/apple/Desktop/fin_ai_platform/instance/app.db
+🔥 All Routes Loaded:
+Map([<Rule '/static/<filename>' (GET, HEAD, OPTIONS) -> static>,
+ <Rule '/auth/register' (GET, POST, HEAD, OPTIONS) -> auth.register>,
+ <Rule '/auth/login' (GET, POST, HEAD, OPTIONS) -> auth.login>,
+ <Rule '/auth/logout' (GET, HEAD, OPTIONS) -> auth.logout>,
+ <Rule '/' (GET, HEAD, OPTIONS) -> main.dashboard>,
+ <Rule '/backtest' (GET, HEAD, OPTIONS) -> main.backtest_page>,
+ <Rule '/screener' (GET, HEAD, OPTIONS) -> main.page_screener>,
+ <Rule '/chart' (GET, HEAD, OPTIONS) -> main.chart_page>,
+ <Rule '/chart/macd' (GET, HEAD, OPTIONS) -> main.chart_macd_page>,
+ <Rule '/chart/rsi' (GET, HEAD, OPTIONS) -> main.chart_rsi_page>,
+ <Rule '/chart/kd' (GET, HEAD, OPTIONS) -> main.chart_kd_page>,
+ <Rule '/chart/bbands' (GET, HEAD, OPTIONS) -> main.chart_bbands_page>,
+ <Rule '/chart/volume' (GET, HEAD, OPTIONS) -> main.chart_volume_page>,
+ <Rule '/chart/all' (GET, HEAD, OPTIONS) -> main.chart_all_page>,
+ <Rule '/stock/<symbol>' (GET, HEAD, OPTIONS) -> main.stock_detail>,
+ <Rule '/stocks' (GET, HEAD, OPTIONS) -> main.page_stocks>,
+ <Rule '/api/stock/summary' (GET, HEAD, OPTIONS) -> api.stock_summary>,
+ <Rule '/api/backtest' (POST, OPTIONS) -> api.api_backtest>,
+ <Rule '/api/fetch_prices' (POST, OPTIONS) -> api.fetch_prices>,
+ <Rule '/api/screener' (POST, OPTIONS) -> api.api_screener>,
+ <Rule '/api/get_prices' (GET, HEAD, OPTIONS) -> api.get_prices>,
+ <Rule '/api/get_prices' (GET, HEAD, OPTIONS) -> api.get_prices>,
+ <Rule '/api/ma_strategy' (GET, HEAD, OPTIONS) -> api.ma_strategy>,
+ <Rule '/api/backtest/history' (GET, HEAD, OPTIONS) -> api.backtest_history>,
+ <Rule '/api/backtest/get/<bt_id>' (GET, HEAD, OPTIONS) -> api.api_get_backtest>,
+ <Rule '/api/score_a2' (POST, OPTIONS) -> api.score_a2>,
+ <Rule '/api/stocks_in_db' (GET, HEAD, OPTIONS) -> api.get_stocks_in_db>,
+ <Rule '/api/update_today' (POST, OPTIONS) -> api.update_today>])
+🚀 2330.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2330.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2330.TW
+⚠️ 2330.TW 無任何資料，略過
+🚀 2317.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2317.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2317.TW
+⚠️ 2317.TW 無任何資料，略過
+🚀 2454.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2454.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2454.TW
+⚠️ 2454.TW 無任何資料，略過
+🚀 6505.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 6505.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 6505.TW
+⚠️ 6505.TW 無任何資料，略過
+🚀 2412.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2412.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2412.TW
+⚠️ 2412.TW 無任何資料，略過
+🚀 2303.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2303.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 2303.TW
+⚠️ 2303.TW 無任何資料，略過
+🚀 1301.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1301.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 1301.TW
+⚠️ 1301.TW 無任何資料，略過
+🚀 1303.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1303.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 1303.TW
+⚠️ 1303.TW 無任何資料，略過
+🚀 3711.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3711.TW 股價，自 2026-01-03 起...
+⚠️ FinMind 沒有回傳股價資料: 3711.TW
+⚠️ 3711.TW 無任何資料，略過
+🚀 2881.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2881.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2881: status=402
+⚠️ FinMind 沒有回傳股價資料: 2881.TW
+⚠️ 2881.TW 無任何資料，略過
+🚀 2882.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2882.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2882: status=402
+⚠️ FinMind 沒有回傳股價資料: 2882.TW
+⚠️ 2882.TW 無任何資料，略過
+🚀 2891.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2891.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2891: status=402
+⚠️ FinMind 沒有回傳股價資料: 2891.TW
+⚠️ 2891.TW 無任何資料，略過
+🚀 2886.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2886.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2886: status=402
+⚠️ FinMind 沒有回傳股價資料: 2886.TW
+⚠️ 2886.TW 無任何資料，略過
+🚀 2382.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2382.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2382: status=402
+⚠️ FinMind 沒有回傳股價資料: 2382.TW
+⚠️ 2382.TW 無任何資料，略過
+🚀 2884.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2884.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2884: status=402
+⚠️ FinMind 沒有回傳股價資料: 2884.TW
+⚠️ 2884.TW 無任何資料，略過
+🚀 2885.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2885.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2885: status=402
+⚠️ FinMind 沒有回傳股價資料: 2885.TW
+⚠️ 2885.TW 無任何資料，略過
+🚀 2603.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2603.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2603: status=402
+⚠️ FinMind 沒有回傳股價資料: 2603.TW
+⚠️ 2603.TW 無任何資料，略過
+🚀 2308.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2308.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2308: status=402
+⚠️ FinMind 沒有回傳股價資料: 2308.TW
+⚠️ 2308.TW 無任何資料，略過
+🚀 2002.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2002.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2002: status=402
+⚠️ FinMind 沒有回傳股價資料: 2002.TW
+⚠️ 2002.TW 無任何資料，略過
+🚀 6768.TWO 增量更新起點: 2018-01-01
+📌 使用 FinMind 更新 6768.TWO 股價，自 2018-01-01 起...
+⚠️ FinMind API Error TaiwanStockPrice 6768O: status=402
+⚠️ FinMind 沒有回傳股價資料: 6768.TWO
+⚠️ 6768.TWO 無任何資料，略過
+🚀 2609.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2609.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2609: status=402
+⚠️ FinMind 沒有回傳股價資料: 2609.TW
+⚠️ 2609.TW 無任何資料，略過
+🚀 5871.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 5871.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 5871: status=402
+⚠️ FinMind 沒有回傳股價資料: 5871.TW
+⚠️ 5871.TW 無任何資料，略過
+🚀 2801.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2801.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2801: status=402
+⚠️ FinMind 沒有回傳股價資料: 2801.TW
+⚠️ 2801.TW 無任何資料，略過
+🚀 2357.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2357.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2357: status=402
+⚠️ FinMind 沒有回傳股價資料: 2357.TW
+⚠️ 2357.TW 無任何資料，略過
+🚀 1590.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1590.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 1590: status=402
+⚠️ FinMind 沒有回傳股價資料: 1590.TW
+⚠️ 1590.TW 無任何資料，略過
+🚀 1326.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1326.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 1326: status=402
+⚠️ FinMind 沒有回傳股價資料: 1326.TW
+⚠️ 1326.TW 無任何資料，略過
+🚀 8046.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 8046.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 8046: status=402
+⚠️ FinMind 沒有回傳股價資料: 8046.TW
+⚠️ 8046.TW 無任何資料，略過
+🚀 2615.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2615.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2615: status=402
+⚠️ FinMind 沒有回傳股價資料: 2615.TW
+⚠️ 2615.TW 無任何資料，略過
+🚀 2880.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2880.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2880: status=402
+⚠️ FinMind 沒有回傳股價資料: 2880.TW
+⚠️ 2880.TW 無任何資料，略過
+🚀 2605.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2605.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2605: status=402
+⚠️ FinMind 沒有回傳股價資料: 2605.TW
+⚠️ 2605.TW 無任何資料，略過
+🚀 1101.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1101.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 1101: status=402
+⚠️ FinMind 沒有回傳股價資料: 1101.TW
+⚠️ 1101.TW 無任何資料，略過
+🚀 1102.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1102.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 1102: status=402
+⚠️ FinMind 沒有回傳股價資料: 1102.TW
+⚠️ 1102.TW 無任何資料，略過
+🚀 1216.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1216.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 1216: status=402
+⚠️ FinMind 沒有回傳股價資料: 1216.TW
+⚠️ 1216.TW 無任何資料，略過
+🚀 3008.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3008.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 3008: status=402
+⚠️ FinMind 沒有回傳股價資料: 3008.TW
+⚠️ 3008.TW 無任何資料，略過
+🚀 3481.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3481.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 3481: status=402
+⚠️ FinMind 沒有回傳股價資料: 3481.TW
+⚠️ 3481.TW 無任何資料，略過
+🚀 4904.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 4904.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 4904: status=402
+⚠️ FinMind 沒有回傳股價資料: 4904.TW
+⚠️ 4904.TW 無任何資料，略過
+🚀 2409.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2409.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2409: status=402
+⚠️ FinMind 沒有回傳股價資料: 2409.TW
+⚠️ 2409.TW 無任何資料，略過
+🚀 2883.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2883.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2883: status=402
+⚠️ FinMind 沒有回傳股價資料: 2883.TW
+⚠️ 2883.TW 無任何資料，略過
+🚀 2356.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2356.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2356: status=402
+⚠️ FinMind 沒有回傳股價資料: 2356.TW
+⚠️ 2356.TW 無任何資料，略過
+🚀 2327.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2327.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2327: status=402
+⚠️ FinMind 沒有回傳股價資料: 2327.TW
+⚠️ 2327.TW 無任何資料，略過
+🚀 6669.TWO 增量更新起點: 2018-01-01
+📌 使用 FinMind 更新 6669.TWO 股價，自 2018-01-01 起...
+⚠️ FinMind API Error TaiwanStockPrice 6669O: status=402
+⚠️ FinMind 沒有回傳股價資料: 6669.TWO
+⚠️ 6669.TWO 無任何資料，略過
+🚀 2379.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2379.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2379: status=402
+⚠️ FinMind 沒有回傳股價資料: 2379.TW
+⚠️ 2379.TW 無任何資料，略過
+🚀 2385.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2385.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2385: status=402
+⚠️ FinMind 沒有回傳股價資料: 2385.TW
+⚠️ 2385.TW 無任何資料，略過
+🚀 9904.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 9904.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 9904: status=402
+⚠️ FinMind 沒有回傳股價資料: 9904.TW
+⚠️ 9904.TW 無任何資料，略過
+🚀 2601.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2601.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2601: status=402
+⚠️ FinMind 沒有回傳股價資料: 2601.TW
+⚠️ 2601.TW 無任何資料，略過
+🚀 2207.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2207.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2207: status=402
+⚠️ FinMind 沒有回傳股價資料: 2207.TW
+⚠️ 2207.TW 無任何資料，略過
+🚀 2105.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2105.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2105: status=402
+⚠️ FinMind 沒有回傳股價資料: 2105.TW
+⚠️ 2105.TW 無任何資料，略過
+🚀 3034.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3034.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 3034: status=402
+⚠️ FinMind 沒有回傳股價資料: 3034.TW
+⚠️ 3034.TW 無任何資料，略過
+🚀 2395.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2395.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2395: status=402
+⚠️ FinMind 沒有回傳股價資料: 2395.TW
+⚠️ 2395.TW 無任何資料，略過
+🚀 4938.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 4938.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 4938: status=402
+⚠️ FinMind 沒有回傳股價資料: 4938.TW
+⚠️ 4938.TW 無任何資料，略過
+🚀 5876.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 5876.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 5876: status=402
+⚠️ FinMind 沒有回傳股價資料: 5876.TW
+⚠️ 5876.TW 無任何資料，略過
+🚀 3037.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3037.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 3037: status=402
+⚠️ FinMind 沒有回傳股價資料: 3037.TW
+⚠️ 3037.TW 無任何資料，略過
+🚀 2637.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2637.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2637: status=402
+⚠️ FinMind 沒有回傳股價資料: 2637.TW
+⚠️ 2637.TW 無任何資料，略過
+🚀 2353.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2353.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2353: status=402
+⚠️ FinMind 沒有回傳股價資料: 2353.TW
+⚠️ 2353.TW 無任何資料，略過
+🚀 2301.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2301.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2301: status=402
+⚠️ FinMind 沒有回傳股價資料: 2301.TW
+⚠️ 2301.TW 無任何資料，略過
+🚀 6239.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 6239.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 6239: status=402
+⚠️ FinMind 沒有回傳股價資料: 6239.TW
+⚠️ 6239.TW 無任何資料，略過
+🚀 2887.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2887.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2887: status=402
+⚠️ FinMind 沒有回傳股價資料: 2887.TW
+⚠️ 2887.TW 無任何資料，略過
+🚀 2888.TW 增量更新起點: 2025-07-12
+📌 使用 FinMind 更新 2888.TW 股價，自 2025-07-12 起...
+⚠️ FinMind API Error TaiwanStockPrice 2888: status=402
+⚠️ FinMind 沒有回傳股價資料: 2888.TW
+⚠️ 2888.TW 無任何資料，略過
+🚀 2889.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2889.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2889: status=402
+⚠️ FinMind 沒有回傳股價資料: 2889.TW
+⚠️ 2889.TW 無任何資料，略過
+🚀 2892.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2892.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2892: status=402
+⚠️ FinMind 沒有回傳股價資料: 2892.TW
+⚠️ 2892.TW 無任何資料，略過
+🚀 8069.TWO 增量更新起點: 2018-01-01
+📌 使用 FinMind 更新 8069.TWO 股價，自 2018-01-01 起...
+⚠️ FinMind API Error TaiwanStockPrice 8069O: status=402
+⚠️ FinMind 沒有回傳股價資料: 8069.TWO
+⚠️ 8069.TWO 無任何資料，略過
+🚀 1909.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1909.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 1909: status=402
+⚠️ FinMind 沒有回傳股價資料: 1909.TW
+⚠️ 1909.TW 無任何資料，略過
+🚀 4930.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 4930.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 4930: status=402
+⚠️ FinMind 沒有回傳股價資料: 4930.TW
+⚠️ 4930.TW 無任何資料，略過
+🚀 3045.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3045.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 3045: status=402
+⚠️ FinMind 沒有回傳股價資料: 3045.TW
+⚠️ 3045.TW 無任何資料，略過
+🚀 3035.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3035.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 3035: status=402
+⚠️ FinMind 沒有回傳股價資料: 3035.TW
+⚠️ 3035.TW 無任何資料，略過
+🚀 2449.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2449.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2449: status=402
+⚠️ FinMind 沒有回傳股價資料: 2449.TW
+⚠️ 2449.TW 無任何資料，略過
+🚀 4934.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 4934.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 4934: status=402
+⚠️ FinMind 沒有回傳股價資料: 4934.TW
+⚠️ 4934.TW 無任何資料，略過
+🚀 3264.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3264.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 3264: status=402
+⚠️ FinMind 沒有回傳股價資料: 3264.TW
+⚠️ 3264.TW 無任何資料，略過
+🚀 2408.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2408.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2408: status=402
+⚠️ FinMind 沒有回傳股價資料: 2408.TW
+⚠️ 2408.TW 無任何資料，略過
+🚀 2498.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2498.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2498: status=402
+⚠️ FinMind 沒有回傳股價資料: 2498.TW
+⚠️ 2498.TW 無任何資料，略過
+🚀 1476.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1476.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 1476: status=402
+⚠️ FinMind 沒有回傳股價資料: 1476.TW
+⚠️ 1476.TW 無任何資料，略過
+🚀 8936.TWO 增量更新起點: 2018-01-01
+📌 使用 FinMind 更新 8936.TWO 股價，自 2018-01-01 起...
+⚠️ FinMind API Error TaiwanStockPrice 8936O: status=402
+⚠️ FinMind 沒有回傳股價資料: 8936.TWO
+⚠️ 8936.TWO 無任何資料，略過
+🚀 1514.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1514.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 1514: status=402
+⚠️ FinMind 沒有回傳股價資料: 1514.TW
+⚠️ 1514.TW 無任何資料，略過
+🚀 1536.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 1536.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 1536: status=402
+⚠️ FinMind 沒有回傳股價資料: 1536.TW
+⚠️ 1536.TW 無任何資料，略過
+🚀 3006.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3006.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 3006: status=402
+⚠️ FinMind 沒有回傳股價資料: 3006.TW
+⚠️ 3006.TW 無任何資料，略過
+🚀 4919.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 4919.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 4919: status=402
+⚠️ FinMind 沒有回傳股價資料: 4919.TW
+⚠️ 4919.TW 無任何資料，略過
+🚀 3017.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3017.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 3017: status=402
+⚠️ FinMind 沒有回傳股價資料: 3017.TW
+⚠️ 3017.TW 無任何資料，略過
+🚀 3014.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 3014.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 3014: status=402
+⚠️ FinMind 沒有回傳股價資料: 3014.TW
+⚠️ 3014.TW 無任何資料，略過
+🚀 2618.TW 增量更新起點: 2026-01-03
+📌 使用 FinMind 更新 2618.TW 股價，自 2026-01-03 起...
+⚠️ FinMind API Error TaiwanStockPrice 2618: status=402
+⚠️ FinMind 沒有回傳股價資料: 2618.TW
+⚠️ 2618.TW 無任何資料，略過
+Traceback (most recent call last):
+  File "/Users/apple/Desktop/fin_ai_platform/load_prices.py", line 14, in <module>
+    update_all_prices(start_date="2018-01-01", limit=None , sleep_sec=0.3)
+  File "/Users/apple/Desktop/fin_ai_platform/app/services/db_loader.py", line 78, in update_all_prices
+    time.sleep(sleep_sec)
+KeyboardInterrupt

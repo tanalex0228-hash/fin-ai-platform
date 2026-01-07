@@ -1,6 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
 
+{# =========================
+   格式化工具（只改前端）
+   ========================= #}
+{% macro fmt(n, d=0) -%}
+  {%- if n is not none -%}
+    {{ "{:,.{d}f}".format(n, d=d) }}
+  {%- else -%}
+    —
+  {%- endif -%}
+{%- endmacro %}
+
 <div class="container mt-4">
 
     <!-- 標題 -->
@@ -14,15 +25,12 @@
         <span class="badge bg-primary">等級 {{ data.grade_final }}</span>
     </div>
 
-
     <!-- 技術面 -->
     <div class="card p-3 mb-4">
         <h4>技術面（{{ data.technical.score }} 分）</h4>
 
-        <h4>技術面（{{ data.technical.score }} 分）</h4>
-
-{% set t = data.technical.latest %}
-{% if t %}
+        {% set t = data.technical.latest %}
+        {% if t %}
         <ul>
             <li>MA 短期 (MA5)：{{ t.MA5 | round(2) if t.MA5 else "—" }}</li>
             <li>MA 長期 (MA20)：{{ t.MA20 | round(2) if t.MA20 else "—" }}</li>
@@ -30,7 +38,7 @@
             <li>MACD DIF：{{ t.MACD_DIF | round(4) if t.MACD_DIF else "—" }}</li>
             <li>MACD DEA：{{ t.MACD_DEA | round(4) if t.MACD_DEA else "—" }}</li>
             <li>MACD HIST：{{ t.MACD_HIST | round(4) if t.MACD_HIST else "—" }}</li>
-            <li>成交量 / 均量：{{ t.volume }} / {{ t.vol_ma | round(0) if t.vol_ma else "—" }}</li>
+            <li>成交量 / 均量：{{ fmt(t.volume, 0) }} / {{ fmt(t.vol_ma, 0) }}</li>
         </ul>
 
         <p class="mt-2">
@@ -41,9 +49,7 @@
         {% else %}
             <p>尚無技術資料</p>
         {% endif %}
-
     </div>
-
 
     <!-- 基本面（新版 A2） -->
     <div class="card p-3 mb-4">
@@ -62,14 +68,117 @@
             <li>PS：{{ fm.ps or "—" }}（{{ fs.ps or 0 }} 分）</li>
             <li>ROE：{{ fm.roe * 100 | round(2) if fm.roe else "—" }}（{{ fs.roe or 0 }} 分）</li>
             <li>ROA：{{ fm.roa * 100 | round(2) if fm.roa else "—" }}（{{ fs.roa or 0 }} 分）</li>
-            <li>營收：{{ fm.revenue or "—" }}（{{ fs.revenue or 0 }} 分）</li>
-            <li>EPS：{{ fm.eps or "—" }}（{{ fs.eps or 0 }} 分）</li>
+            <li>營收：{{ fmt(fm.revenue, 0) if fm.revenue else "—" }}（{{ fs.revenue or 0 }} 分）</li>
+            <li>EPS：{{ fmt(fm.eps, 2) if fm.eps else "—" }}（{{ fs.eps or 0 }} 分）</li>
         </ul>
         {% else %}
             <p>尚無基本面資料</p>
         {% endif %}
     </div>
 
+    <!-- 三大財務報表 -->
+    <div class="card p-3 mb-4">
+      <h4>三大財務報表</h4>
+
+      {% set fin = data.financials %}
+
+      {% if not fin %}
+        <p class="text-muted mb-0">尚無三大財報資料</p>
+      {% else %}
+
+        {# ===== Income Statement ===== #}
+        {% if fin.income_statement and fin.income_statement|length > 0 %}
+          <h5 class="mt-3">損益表 Income Statement</h5>
+          <table class="table table-sm table-bordered">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Revenue</th>
+                <th>Gross Profit</th>
+                <th>Operating Income</th>
+                <th>Net Income</th>
+                <th>EPS</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in fin.income_statement %}
+              <tr>
+                <td>{{ r.date }}</td>
+                <td>{{ fmt(r.revenue, 0) }}</td>
+                <td>{{ fmt(r.gross_profit, 0) }}</td>
+                <td>{{ fmt(r.operating_income, 0) }}</td>
+                <td>{{ fmt(r.net_income, 0) }}</td>
+                <td>{{ fmt(r.eps, 2) }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p class="text-muted mb-0">尚無損益表資料</p>
+        {% endif %}
+
+        {# ===== Balance Sheet ===== #}
+        {% if fin.balance_sheet and fin.balance_sheet|length > 0 %}
+          <h5 class="mt-4">資產負債表 Balance Sheet</h5>
+          <table class="table table-sm table-bordered">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Total Assets</th>
+                <th>Total Liabilities</th>
+                <th>Shareholders Equity</th>
+                <th>Current Assets</th>
+                <th>Current Liabilities</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in fin.balance_sheet %}
+              <tr>
+                <td>{{ r.date }}</td>
+                <td>{{ fmt(r.total_assets, 0) }}</td>
+                <td>{{ fmt(r.total_liabilities, 0) }}</td>
+                <td>{{ fmt(r.shareholders_equity, 0) }}</td>
+                <td>{{ fmt(r.current_assets, 0) }}</td>
+                <td>{{ fmt(r.current_liabilities, 0) }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p class="text-muted mb-0">尚無資產負債表資料</p>
+        {% endif %}
+
+        {# ===== Cash Flow ===== #}
+        {% if fin.cash_flow and fin.cash_flow|length > 0 %}
+          <h5 class="mt-4">現金流量表 Cash Flow</h5>
+          <table class="table table-sm table-bordered">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Operating CF</th>
+                <th>Investing CF</th>
+                <th>Financing CF</th>
+                <th>Free CF</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in fin.cash_flow %}
+              <tr>
+                <td>{{ r.date }}</td>
+                <td>{{ fmt(r.operating_cashflow, 0) }}</td>
+                <td>{{ fmt(r.investing_cashflow, 0) }}</td>
+                <td>{{ fmt(r.financing_cashflow, 0) }}</td>
+                <td>{{ fmt(r.free_cashflow, 0) }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p class="text-muted mb-0">尚無現金流量表資料</p>
+        {% endif %}
+
+      {% endif %}
+    </div>
 
     <!-- 風險 -->
     <div class="card p-3 mb-4">
@@ -90,7 +199,6 @@
         {% endif %}
     </div>
 
-
     <!-- 雷達圖 -->
     <div class="card p-3 mb-4">
         <h4>七因子基本面雷達圖</h4>
@@ -98,7 +206,6 @@
     </div>
 
 </div>
-
 
 <!-- Plotly -->
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
@@ -115,7 +222,6 @@ const radarScores = [
     {{ fs.eps or 0 }}
 ];
 
-// 封閉雷達圖
 radarCategories.push(radarCategories[0]);
 radarScores.push(radarScores[0]);
 

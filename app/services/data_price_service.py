@@ -36,7 +36,7 @@ def fetch_price_from_finmind(symbol: str, start_date: str = "2000-01-01") -> pd.
     df["date"] = pd.to_datetime(df["date"]).dt.date
 
     df = df.rename(columns={
-        "open": "open",
+        "open": "open", 
         "max": "high",
         "min": "low",
         "close": "close",

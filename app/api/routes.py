@@ -22,6 +22,9 @@ from ..services.deeplearning import cnn, rnn, knn
 from ..services.data_fetch_async import fetch_price_batch_turbo
 from . import api_bp
 from app.services.scoring.a2_scoring import compute_a2_scores
+from app.services.financials_service import get_financials
+
+
 
 
 
@@ -61,6 +64,22 @@ def stock_summary():
 
     data = get_stock_summary(symbol)
     return jsonify(data)
+
+
+
+
+@api_bp.route("/financials/<stock_id>", methods=["GET"])
+def api_financials(stock_id):
+    limit = int(request.args.get("limit", 8))
+    latest = request.args.get("latest", "false").lower() == "true"
+
+    data = get_financials(
+        stock_id=stock_id,
+        limit=limit,
+        latest=latest
+    )
+    return jsonify(data)
+
 
 
 
