@@ -7,6 +7,8 @@ import os
 import sqlite3
 import pandas as pd
 import numpy as np
+import yfinance as yf
+
 
 from ..services import (
     data_fetch_async,
@@ -215,113 +217,72 @@ def api_backtest():
 # ---------------------------------------
 @api_bp.route("/fetch_prices", methods=["POST"])
 def fetch_prices():
-    import asyncio, time
+    import time
+    import pandas as pd
+    import numpy as np
 
-    data = request.get_json()
+    data = request.get_json() or {}
     symbols = data.get("symbols", [])
     period = data.get("period", "1mo")
 
     if not symbols:
         return jsonify({"error": "symbols required"}), 400
 
-    print("📌 開始 Turbo 抓價格…")
     t0 = time.time()
-
-    try:
-        price_dict = asyncio.run(
-            fetch_price_batch_turbo(
-                symbols,
-                period=period,
-                interval="1d",
-                workers=10
-            )
-        )
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-    print("📌 Turbo 完成，耗時 =", round(time.time() - t0, 2), "秒")
-
     total_saved = 0
     failed = []
     debug_cols = {}
 
-    for sym, df in price_dict.items():
-        if df is None or df.empty:
-            failed.append(f"{sym}: empty df")
-            debug_cols[sym] = []
-            continue
-
-        # 先記錄「原始欄位」(最多 30 個)
+    for sym in symbols:
         try:
-            debug_cols[sym] = [str(c) for c in df.columns][:30]
-        except Exception as e:
-            debug_cols[sym] = [f"ERR reading cols: {e}"]
-
-        # 1) MultiIndex 處理（yfinance 常見）
-        if isinstance(df.columns, pd.MultiIndex):
-            try:
-                df_try = None
-                try:
-                    df_try = df.xs(sym, level=1, axis=1)
-                except Exception:
-                    pass
-
-                if df_try is not None and not df_try.empty:
-                    df = df_try
-                else:
-                    df.columns = [
-                        " ".join([str(x) for x in col if x is not None]).strip()
-                        for col in df.columns
-                    ]
-            except Exception as e:
-                failed.append(f"{sym}: MultiIndex normalize failed: {e}")
+            df = yf.download(
+                sym,
+                period=period,
+                interval="1d",
+                auto_adjust=False,
+                progress=False,
+                threads=False,
+            )
+            if df is None or df.empty:
+                failed.append(f"{sym}: empty from yfinance")
+                debug_cols[sym] = []
                 continue
 
-        # 2) 欄位名稱清理
-        df = df.copy()
-        df.columns = [str(c).strip() for c in df.columns]
+            # yfinance 常見欄位：Open High Low Close Adj Close Volume
+            debug_cols[sym] = [str(c) for c in df.columns][:30]
 
-        # 3) 欄位映射
-        rename_map = {
-            "open": "Open",
-            "high": "High",
-            "low": "Low",
-            "close": "Close",
-            "volume": "Volume",
-            "adj close": "Adj Close",
-            "adj_close": "Adj Close",
-            "adjclose": "Adj Close",
-        }
-        df.rename(columns={c: rename_map.get(c.lower(), c) for c in df.columns}, inplace=True)
+            # 欄位標準化（確保是 Open/High/Low/Close/Volume）
+            df = df.copy()
+            df.columns = [str(c).strip() for c in df.columns]
+            rename_map = {
+                "open": "Open",
+                "high": "High",
+                "low": "Low",
+                "close": "Close",
+                "volume": "Volume",
+                "adj close": "Adj Close",
+                "adjclose": "Adj Close",
+                "adj_close": "Adj Close",
+            }
+            df.rename(columns={c: rename_map.get(c.lower(), c) for c in df.columns}, inplace=True)
 
-        # 4) Date 欄位補救
-        if "Date" in df.columns:
-            df["Date"] = pd.to_datetime(df["Date"])
-            df.set_index("Date", inplace=True)
+            need = {"Open", "High", "Low", "Close", "Volume"}
+            if not need.issubset(set(df.columns)):
+                failed.append(f"{sym}: missing OHLCV got={list(df.columns)[:30]}")
+                continue
 
-        # ✅ 再記錄「處理後欄位」(最多 30 個)
-        try:
-            debug_cols[sym] = debug_cols.get(sym, []) + ["--after--"] + [str(c) for c in df.columns][:30]
-        except Exception:
-            pass
-
-        # 5) 檢查欄位
-        need = {"Open", "High", "Low", "Close", "Volume"}
-        if not need.issubset(set(df.columns)):
-            failed.append(f"{sym}: Missing OHLCV, got={list(df.columns)[:30]}")
-            continue
-
-        try:
             saved_now = etl.save_price_df_to_db(sym.strip().upper(), df)
             total_saved += saved_now
+
         except Exception as e:
-            failed.append(f"{sym}: save failed: {e}")
+            failed.append(f"{sym}: {e}")
 
     return jsonify({
         "status": "success",
         "rows_saved": total_saved,
         "failed": failed,
-        "debug_cols": debug_cols
+        "debug_cols": debug_cols,
+        "elapsed": round(time.time() - t0, 2),
     })
 
 
