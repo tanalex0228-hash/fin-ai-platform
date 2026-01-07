@@ -25,90 +25,98 @@ def _safe_float(value):
     return v
 
 
+
+
 def save_price_df_to_db(symbol: str, df: pd.DataFrame) -> int:
     if df is None or df.empty:
         return 0
 
     df = df.copy()
 
-    # ✅ 欄位名標準化：不管 Open / open / Adj Close / adjclose 都先轉成可比對 key
-    def _norm_col(c: str) -> str:
-        return str(c).strip().lower().replace(" ", "").replace("_", "")
+    # 1) MultiIndex 欄位壓扁（yfinance 常見）
+    if hasattr(df.columns, "nlevels") and df.columns.nlevels > 1:
+        df.columns = [
+            " ".join([str(x) for x in col if x is not None]).strip()
+            for col in df.columns
+        ]
 
-    colmap = {_norm_col(c): c for c in df.columns}
+    # 2) 欄位名正規化：不管是 "Open" / "open" / "Open 2330.TW" 都變成 Open
+    def norm(c: str) -> str:
+        s = str(c).strip()
+        first = s.split()[0].strip().lower()  # 取第一段
+        if first == "open": return "Open"
+        if first == "high": return "High"
+        if first == "low": return "Low"
+        if first == "close": return "Close"
+        if first == "volume": return "Volume"
+        if first == "adj": return "Adj Close"
+        if s.lower().replace(" ", "") in ("adjclose", "adj_close"): return "Adj Close"
+        if s.lower() == "adj close": return "Adj Close"
+        return s
 
-    def _get(row, key: str):
-        """key 用標準名，例如 open/high/low/close/volume"""
-        k = _norm_col(key)
-        real = colmap.get(k)
-        return row.get(real) if real is not None else None
+    df.columns = [norm(c) for c in df.columns]
 
-    # ✅ 確保 index 是 datetime
+    # 3) 確保 index 是日期
     df.index = pd.to_datetime(df.index, errors="coerce")
     df = df[~df.index.isna()]
     df.sort_index(inplace=True)
 
-    # ✅ 用 close 計算報酬（close 也可能是 Close / close）
-    close_series = df[colmap.get("close")] if "close" in colmap else None
-    if close_series is not None:
-        df["return_pct"] = close_series.pct_change()
-        df["log_return"] = df["return_pct"].apply(
-            lambda x: math.log1p(x) if (x is not None and not pd.isna(x)) else None
-        )
-    else:
-        df["return_pct"] = None
-        df["log_return"] = None
+    # 4) 必要欄位不存在就直接不寫（回 0）
+    need = {"Open", "High", "Low", "Close", "Volume"}
+    if not need.issubset(set(df.columns)):
+        print("❌ Missing OHLCV:", list(df.columns))
+        return 0
 
-    saved = 0
+    # 5) 報酬率
+    df["return_pct"] = df["Close"].pct_change()
+    df["log_return"] = df["return_pct"].apply(
+        lambda x: math.log1p(x) if (x is not None and not pd.isna(x)) else None
+    )
+
+    inserted = 0
 
     for idx, row in df.iterrows():
         trade_date = idx.date()
 
-        open_val = _safe_float(_get(row, "open"))
-        high_val = _safe_float(_get(row, "high"))
-        low_val  = _safe_float(_get(row, "low"))
-        close_val = _safe_float(_get(row, "close"))
-        volume_val = _safe_float(_get(row, "volume"))
-
+        open_val = _safe_float(row.get("Open"))
+        high_val = _safe_float(row.get("High"))
+        low_val = _safe_float(row.get("Low"))
+        close_val = _safe_float(row.get("Close"))
+        volume_val = _safe_float(row.get("Volume"))
         ret_val = _safe_float(row.get("return_pct"))
         log_ret_val = _safe_float(row.get("log_return"))
 
         if all(v is None for v in [open_val, high_val, low_val, close_val, volume_val]):
             continue
 
-        try:
-            existing = StockPrice.query.filter_by(symbol=symbol, date=trade_date).first()
+        existing = StockPrice.query.filter_by(symbol=symbol, date=trade_date).first()
 
-            if existing:
-                existing.open = open_val
-                existing.high = high_val
-                existing.low = low_val
-                existing.close = close_val
-                existing.volume = volume_val
-                existing.return_pct = ret_val
-                existing.log_return = log_ret_val
-                # （可選）你想看更新也算數字，就加這行：
-                # saved += 1
-            else:
-                price = StockPrice(
-                    symbol=symbol,
-                    date=trade_date,
-                    open=open_val,
-                    high=high_val,
-                    low=low_val,
-                    close=close_val,
-                    volume=volume_val,
-                    return_pct=ret_val,
-                    log_return=log_ret_val,
-                )
-                db.session.add(price)
-                saved += 1
-
-        except Exception as e:
-            print(f"❌ Error saving row {idx} for {symbol}: {e}")
+        if existing:
+            existing.open = open_val
+            existing.high = high_val
+            existing.low = low_val
+            existing.close = close_val
+            existing.volume = volume_val
+            existing.return_pct = ret_val
+            existing.log_return = log_ret_val
+        else:
+            db.session.add(StockPrice(
+                symbol=symbol,
+                date=trade_date,
+                open=open_val,
+                high=high_val,
+                low=low_val,
+                close=close_val,
+                volume=volume_val,
+                return_pct=ret_val,
+                log_return=log_ret_val
+            ))
+            inserted += 1
 
     db.session.commit()
-    return saved
+    print(f"✅ ETL {symbol} inserted={inserted}, rows={len(df)}")
+    return inserted
+
 
 
 
