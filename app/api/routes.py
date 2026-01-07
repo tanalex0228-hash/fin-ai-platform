@@ -25,6 +25,30 @@ from app.services.scoring.a2_scoring import compute_a2_scores
 from app.services.financials_service import get_financials
 
 
+# ---------------------------------------
+# ✅ DB path helper (Railway-safe)
+# ---------------------------------------
+def get_sqlite_db_path() -> str:
+    """
+    Local:  <project>/instance/app.db
+    Railway: /tmp/app.db  (container writable)
+    """
+    # Railway 會有這些環境變數其一（任一存在就當作 Railway）
+    if os.getenv("RAILWAY_ENVIRONMENT") or os.getenv("RAILWAY_PROJECT_ID") or os.getenv("RAILWAY_STATIC_URL"):
+        return "/tmp/app.db"
+
+    # Local / dev
+    db_path = os.path.join(current_app.root_path, "..", "instance", "app.db")
+    return os.path.abspath(db_path)
+
+
+def ensure_sqlite_dir(db_path: str) -> None:
+    """
+    確保 sqlite 檔案所在資料夾存在（避免 unable to open database file）
+    """
+    dir_path = os.path.dirname(db_path)
+    if dir_path and not os.path.exists(dir_path):
+        os.makedirs(dir_path, exist_ok=True)
 
 
 
@@ -32,8 +56,9 @@ from app.services.financials_service import get_financials
 # 📌 從資料庫讀取單一股票資料
 # ---------------------------------------
 def load_price_df(symbol: str):
-    db_path = os.path.join(current_app.root_path, "..", "instance", "app.db")
-    db_path = os.path.abspath(db_path)
+    db_path = get_sqlite_db_path()
+    ensure_sqlite_dir(db_path)
+
     conn = sqlite3.connect(db_path)
 
     df = pd.read_sql_query(
@@ -462,3 +487,15 @@ def update_today():
             "status": "error",
             "message": str(e)
         }), 500
+
+
+
+
+@api_bp.route("/debug/sqlite_path", methods=["GET"])
+def debug_sqlite_path():
+    p = get_sqlite_db_path()
+    return jsonify({
+        "sqlite_db_path": p,
+        "exists": os.path.exists(p),
+        "cwd": os.getcwd()
+    })
