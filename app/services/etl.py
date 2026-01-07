@@ -26,60 +26,60 @@ def _safe_float(value):
 
 
 def save_price_df_to_db(symbol: str, df: pd.DataFrame) -> int:
-    """
-    將單一股票的價格 DataFrame 寫入 StockPrice 資料表。
-
-    期待的 df 格式：
-        index: DatetimeIndex (交易日期)
-        columns 至少包含: 'Open', 'High', 'Low', 'Close', 'Volume'
-        （這跟 data_fetch_async._download_yf 的輸出一致）
-
-    行為：
-        - 若 (symbol, date) 已經存在 → 更新該筆資料
-        - 否則 → 新增一筆
-        - 同時計算 return_pct 與 log_return
-    """
     if df is None or df.empty:
         return 0
 
-    # 確保 index 是 datetime，並依日期排序
     df = df.copy()
-    df.index = pd.to_datetime(df.index)
+
+    # ✅ 欄位名標準化：不管 Open / open / Adj Close / adjclose 都先轉成可比對 key
+    def _norm_col(c: str) -> str:
+        return str(c).strip().lower().replace(" ", "").replace("_", "")
+
+    colmap = {_norm_col(c): c for c in df.columns}
+
+    def _get(row, key: str):
+        """key 用標準名，例如 open/high/low/close/volume"""
+        k = _norm_col(key)
+        real = colmap.get(k)
+        return row.get(real) if real is not None else None
+
+    # ✅ 確保 index 是 datetime
+    df.index = pd.to_datetime(df.index, errors="coerce")
+    df = df[~df.index.isna()]
     df.sort_index(inplace=True)
 
-    # 先在 DataFrame 層級計算報酬率（效率比較好）
-    df["return_pct"] = df["Close"].pct_change()
-    # 避免 log(1 + NaN) / log(1 + 負到爆炸）
-    df["log_return"] = df["return_pct"].apply(
-        lambda x: math.log1p(x) if (x is not None and not pd.isna(x)) else None
-    )
+    # ✅ 用 close 計算報酬（close 也可能是 Close / close）
+    close_series = df[colmap.get("close")] if "close" in colmap else None
+    if close_series is not None:
+        df["return_pct"] = close_series.pct_change()
+        df["log_return"] = df["return_pct"].apply(
+            lambda x: math.log1p(x) if (x is not None and not pd.isna(x)) else None
+        )
+    else:
+        df["return_pct"] = None
+        df["log_return"] = None
 
     saved = 0
 
     for idx, row in df.iterrows():
-        trade_date = idx.date()  # datetime → date (對應到 models.StockPrice 的 Date 型別)
+        trade_date = idx.date()
 
-        open_val = _safe_float(row.get("Open"))
-        high_val = _safe_float(row.get("High"))
-        low_val = _safe_float(row.get("Low"))
-        close_val = _safe_float(row.get("Close"))
-        volume_val = _safe_float(row.get("Volume"))
+        open_val = _safe_float(_get(row, "open"))
+        high_val = _safe_float(_get(row, "high"))
+        low_val  = _safe_float(_get(row, "low"))
+        close_val = _safe_float(_get(row, "close"))
+        volume_val = _safe_float(_get(row, "volume"))
+
         ret_val = _safe_float(row.get("return_pct"))
         log_ret_val = _safe_float(row.get("log_return"))
 
-        # 如果這一行完全沒有價格資訊，就直接跳過
         if all(v is None for v in [open_val, high_val, low_val, close_val, volume_val]):
             continue
 
         try:
-            # 檢查這個 symbol + date 是否已存在
-            existing = StockPrice.query.filter_by(
-                symbol=symbol,
-                date=trade_date
-            ).first()
+            existing = StockPrice.query.filter_by(symbol=symbol, date=trade_date).first()
 
             if existing:
-                # 更新已有紀錄
                 existing.open = open_val
                 existing.high = high_val
                 existing.low = low_val
@@ -87,8 +87,9 @@ def save_price_df_to_db(symbol: str, df: pd.DataFrame) -> int:
                 existing.volume = volume_val
                 existing.return_pct = ret_val
                 existing.log_return = log_ret_val
+                # （可選）你想看更新也算數字，就加這行：
+                # saved += 1
             else:
-                # 新增一筆新的價格紀錄
                 price = StockPrice(
                     symbol=symbol,
                     date=trade_date,
@@ -108,6 +109,7 @@ def save_price_df_to_db(symbol: str, df: pd.DataFrame) -> int:
 
     db.session.commit()
     return saved
+
 
 
 def save_t86_df_to_db(df: pd.DataFrame) -> int:
