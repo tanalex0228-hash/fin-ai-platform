@@ -217,8 +217,6 @@ def api_backtest():
 # ---------------------------------------
 @api_bp.route("/fetch_prices", methods=["POST"])
 def fetch_prices():
-    return jsonify({"MARK":"I_AM_NEW_FETCH_PRICES_v2"}), 200
-
     import time
     import pandas as pd
     import yfinance as yf
@@ -226,24 +224,24 @@ def fetch_prices():
 
     data = request.get_json() or {}
     symbols = data.get("symbols", [])
-    period = data.get("period", "6mo")
+    period = str(data.get("period", "6mo")).strip().lower()
 
     if not symbols:
         return jsonify({"error": "symbols required"}), 400
 
-    # period → days
-    p = str(period).strip().lower()
+    # period → days（FinMind 用）
     days_map = {"1mo": 35, "3mo": 120, "6mo": 220, "1y": 370, "2y": 760, "5y": 1900}
-    days = days_map.get(p, 220)
+    days = days_map.get(period, 220)
 
     t0 = time.time()
     total_saved = 0
     failed = []
     debug = {}
 
-    # FinMind client（只建立一次）
-    finmind_token = current_app.config.get("FINMIND_TOKEN") or ""
+    # ---- FinMind init ----
+    finmind_token = (current_app.config.get("FINMIND_TOKEN") or "").strip()
     fm = None
+    fm_init_error = None
     if finmind_token:
         try:
             from FinMind.data import DataLoader
@@ -251,44 +249,47 @@ def fetch_prices():
             fm.login_by_token(finmind_token)
         except Exception as e:
             fm = None
-            failed.append(f"FinMind init failed: {e}")
+            fm_init_error = str(e)
 
     for sym in symbols:
         sym_clean = sym.strip().upper()
-        debug[sym_clean] = {"source": None, "cols": []}
+        debug[sym_clean] = {"source": None, "yf_empty": None, "fm_empty": None, "cols": []}
 
-        # ---------- A) 先試 yfinance ----------
         df = None
+
+        # ---------- A) yfinance ----------
         try:
             df_yf = yf.download(
                 sym_clean,
-                period=p,
+                period=period,
                 interval="1d",
                 auto_adjust=False,
                 progress=False,
                 threads=False,
             )
-            if df_yf is not None and not df_yf.empty:
+            if df_yf is None or df_yf.empty:
+                debug[sym_clean]["yf_empty"] = True
+            else:
                 df = df_yf.copy()
                 df.columns = [str(c).strip() for c in df.columns]
                 need = {"Open", "High", "Low", "Close", "Volume"}
                 if need.issubset(set(df.columns)):
                     debug[sym_clean]["source"] = "yfinance"
-                    debug[sym_clean]["cols"] = list(df.columns)[:20]
+                    debug[sym_clean]["cols"] = list(df.columns)[:10]
                 else:
                     df = None
-        except Exception:
-            df = None
+        except Exception as e:
+            debug[sym_clean]["yf_empty"] = True
 
-        # ---------- B) yfinance 空 → 改用 FinMind ----------
+        # ---------- B) FinMind fallback ----------
         if df is None:
             if fm is None:
-                failed.append(f"{sym_clean}: yfinance empty, FinMind not ready (missing token?)")
+                failed.append(f"{sym_clean}: yfinance empty; FinMind not ready (token missing or init failed)")
+                if fm_init_error:
+                    failed.append(f"FinMind init error: {fm_init_error}")
                 continue
 
-            # FinMind stock_id 不要 .TW/.TWO
             stock_id = sym_clean.replace(".TW", "").replace(".TWO", "")
-
             try:
                 end = date.today()
                 start = end - timedelta(days=days)
@@ -300,30 +301,35 @@ def fetch_prices():
                 )
 
                 if df_fm is None or df_fm.empty:
+                    debug[sym_clean]["fm_empty"] = True
                     failed.append(f"{sym_clean}: empty from FinMind")
                     continue
 
-                # FinMind 欄位轉成 ETL 需要的 Open/High/Low/Close/Volume
-                # 常見欄位：date, open, max, min, close, Trading_Volume ...
-                col_map = {}
+                # 欄位正規化
+                # FinMind 常見：date, open, max, min, close, Trading_Volume ...
+                rename = {}
                 for c in df_fm.columns:
                     lc = str(c).lower()
-                    if lc == "open": col_map[c] = "Open"
-                    elif lc in ("max", "high"): col_map[c] = "High"
-                    elif lc in ("min", "low"): col_map[c] = "Low"
-                    elif lc == "close": col_map[c] = "Close"
-                    elif lc in ("trading_volume", "volume"): col_map[c] = "Volume"
+                    if lc == "open":
+                        rename[c] = "Open"
+                    elif lc in ("max", "high"):
+                        rename[c] = "High"
+                    elif lc in ("min", "low"):
+                        rename[c] = "Low"
+                    elif lc == "close":
+                        rename[c] = "Close"
+                    elif lc in ("trading_volume", "volume"):
+                        rename[c] = "Volume"
 
-                df_fm = df_fm.rename(columns=col_map)
+                df_fm = df_fm.rename(columns=rename)
 
-                need = {"Open", "High", "Low", "Close", "Volume", "date"}
+                need = {"date", "Open", "High", "Low", "Close", "Volume"}
                 if not need.issubset(set(df_fm.columns)):
-                    failed.append(f"{sym_clean}: FinMind cols not match, got={list(df_fm.columns)[:30]}")
+                    failed.append(f"{sym_clean}: FinMind columns mismatch got={list(df_fm.columns)[:30]}")
                     continue
 
                 df_fm["date"] = pd.to_datetime(df_fm["date"])
-                df_fm = df_fm.sort_values("date")
-                df_fm = df_fm.set_index("date")[["Open", "High", "Low", "Close", "Volume"]]
+                df_fm = df_fm.sort_values("date").set_index("date")[["Open", "High", "Low", "Close", "Volume"]]
 
                 df = df_fm
                 debug[sym_clean]["source"] = "finmind"
@@ -333,7 +339,7 @@ def fetch_prices():
                 failed.append(f"{sym_clean}: FinMind error: {e}")
                 continue
 
-        # ---------- 寫入 DB ----------
+        # ---------- write to DB ----------
         try:
             saved_now = etl.save_price_df_to_db(sym_clean, df)
             total_saved += saved_now
@@ -347,6 +353,7 @@ def fetch_prices():
         "debug": debug,
         "elapsed": round(time.time() - t0, 2),
     })
+
 
 
 
