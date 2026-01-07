@@ -87,6 +87,13 @@ def load_price_df(symbol: str):
 
 
 
+@api_bp.route("/__version", methods=["GET"])
+def __version():
+    import os
+    return jsonify({
+        "commit": os.getenv("RAILWAY_GIT_COMMIT_SHA") or "unknown",
+        "msg": "HELLO_FROM_3607365"
+    })
 
 # ---------------------------------------
 # 📌 股票摘要（暫時 placeholder）
