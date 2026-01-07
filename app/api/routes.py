@@ -236,39 +236,45 @@ def fetch_prices():
 
     total_saved = 0
     failed = []
+    debug_cols = {}
 
     for sym, df in price_dict.items():
         if df is None or df.empty:
-            failed.append(sym)
+            failed.append(f"{sym}: empty df")
+            debug_cols[sym] = []
             continue
+
+        # 先記錄「原始欄位」(最多 30 個)
+        try:
+            debug_cols[sym] = [str(c) for c in df.columns][:30]
+        except Exception as e:
+            debug_cols[sym] = [f"ERR reading cols: {e}"]
 
         # 1) MultiIndex 處理（yfinance 常見）
         if isinstance(df.columns, pd.MultiIndex):
-            # 盡量把欄位壓成單層
             try:
-                # 常見：欄位長得像 ('Open','2330.TW') 或 (something, sym)
-                # 先嘗試抓 sym 那層
                 df_try = None
                 try:
                     df_try = df.xs(sym, level=1, axis=1)
-                except:
+                except Exception:
                     pass
 
                 if df_try is not None and not df_try.empty:
                     df = df_try
                 else:
-                    # 不行就把 multiindex 直接 join 成字串
-                    df.columns = [" ".join([str(x) for x in col if x is not None]).strip() for col in df.columns]
+                    df.columns = [
+                        " ".join([str(x) for x in col if x is not None]).strip()
+                        for col in df.columns
+                    ]
             except Exception as e:
-                print("❌ MultiIndex normalize failed:", sym, e)
-                failed.append(sym)
+                failed.append(f"{sym}: MultiIndex normalize failed: {e}")
                 continue
 
         # 2) 欄位名稱清理
         df = df.copy()
         df.columns = [str(c).strip() for c in df.columns]
 
-        # 3) 欄位映射：把各種可能名稱統一成 Open/High/Low/Close/Volume
+        # 3) 欄位映射
         rename_map = {
             "open": "Open",
             "high": "High",
@@ -277,36 +283,40 @@ def fetch_prices():
             "volume": "Volume",
             "adj close": "Adj Close",
             "adj_close": "Adj Close",
-            "Adj Close": "Adj Close",
+            "adjclose": "Adj Close",
         }
         df.rename(columns={c: rename_map.get(c.lower(), c) for c in df.columns}, inplace=True)
 
-        # 4) 有些資料會把日期放在欄位而不是 index，補救一下
+        # 4) Date 欄位補救
         if "Date" in df.columns:
             df["Date"] = pd.to_datetime(df["Date"])
             df.set_index("Date", inplace=True)
 
-        # 5) 最關鍵：確認 ETL 需要的欄位存在
+        # ✅ 再記錄「處理後欄位」(最多 30 個)
+        try:
+            debug_cols[sym] = debug_cols.get(sym, []) + ["--after--"] + [str(c) for c in df.columns][:30]
+        except Exception:
+            pass
+
+        # 5) 檢查欄位
         need = {"Open", "High", "Low", "Close", "Volume"}
         if not need.issubset(set(df.columns)):
-            print("❌ Missing OHLCV columns:", sym, "got=", list(df.columns))
-            failed.append(sym)
+            failed.append(f"{sym}: Missing OHLCV, got={list(df.columns)[:30]}")
             continue
 
         try:
             saved_now = etl.save_price_df_to_db(sym.strip().upper(), df)
             total_saved += saved_now
-            print("✅ saved:", sym, saved_now)
         except Exception as e:
-            print("❌ save failed:", sym, e)
-            failed.append(sym)
-
+            failed.append(f"{sym}: save failed: {e}")
 
     return jsonify({
         "status": "success",
         "rows_saved": total_saved,
-        "failed": failed
+        "failed": failed,
+        "debug_cols": debug_cols
     })
+
 
 
 
