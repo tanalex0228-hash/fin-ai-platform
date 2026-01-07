@@ -217,6 +217,8 @@ def api_backtest():
 # ---------------------------------------
 @api_bp.route("/fetch_prices", methods=["POST"])
 def fetch_prices():
+    return jsonify({"MARK":"I_AM_NEW_FETCH_PRICES_v2"}), 200
+
     import time
     import pandas as pd
     import yfinance as yf
